@@ -1,30 +1,30 @@
-import Link from 'next/link'
-import { FC } from 'react'
+import Link from "next/link";
+import { FC } from "react";
 import {
   AiOutlineFacebook,
   AiOutlineInstagram,
   AiOutlineLinkedin,
-  AiOutlineTwitter
-} from 'react-icons/ai'
+  AiOutlineTwitter,
+} from "react-icons/ai";
 
 const links = [
   {
-    href: '/about',
-    label: 'About'
+    href: "/about",
+    label: "About",
   },
   {
-    href: '/contact',
-    label: 'Contact'
+    href: "/contact",
+    label: "Contact",
   },
   {
-    href: '/categories',
-    label: 'Categories'
+    href: "/categories",
+    label: "Categories",
   },
   {
-    href: '/portfolio',
-    label: 'Portfolio'
-  }
-]
+    href: "/portfolio",
+    label: "Portfolio",
+  },
+];
 
 export const Footer: FC = () => {
   return (
@@ -39,7 +39,7 @@ export const Footer: FC = () => {
               <li key={index}>
                 <Link href={link.href}>{link.label}</Link>
               </li>
-            )
+            );
           })}
         </ul>
       </div>
@@ -86,5 +86,5 @@ export const Footer: FC = () => {
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
