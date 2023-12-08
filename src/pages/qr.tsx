@@ -24,13 +24,13 @@ export default function Home() {
           <BsWhatsapp size="48" />
           <p className="text-xl">Whatsapp</p>
         </Link> */}
-        {/* <Link
-          href="https://instagram.com/d_signersspace_udaipur?igshid=MzRlODBiNWFlZA=="
+        <Link
+          href="https://instagram.com/vinayakfenster.com?igshid=OGQ5ZDc2ODk2ZA=="
           className="flex flex-col items-center col-span-2"
         >
           <BsInstagram size="48" />
           <p className="text-xl">Instagram</p>
-        </Link> */}
+        </Link>
         {/* <Link href="tel:+917014706078" className="flex flex-col items-center">
           <BsTelephone size="48" />
           <p className="text-xl">Phone</p>
