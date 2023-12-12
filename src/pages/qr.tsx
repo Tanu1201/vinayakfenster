@@ -1,6 +1,6 @@
 import { Comic_Neue } from 'next/font/google'
 import Link from 'next/link'
-import { BsFacebook } from 'react-icons/bs'
+import { BsFacebook, BsInstagram } from 'react-icons/bs'
 import { IoLocationOutline } from 'react-icons/io5'
 
 const comic = Comic_Neue({ subsets: ['latin'], weight: '700' })
@@ -24,13 +24,7 @@ export default function Home() {
           <BsWhatsapp size="48" />
           <p className="text-xl">Whatsapp</p>
         </Link> */}
-        <Link
-          href="https://instagram.com/vinayakfenster.com?igshid=OGQ5ZDc2ODk2ZA=="
-          className="flex flex-col items-center col-span-2"
-        >
-          <BsInstagram size="48" />
-          <p className="text-xl">Instagram</p>
-        </Link>
+
         {/* <Link href="tel:+917014706078" className="flex flex-col items-center">
           <BsTelephone size="48" />
           <p className="text-xl">Phone</p>
@@ -41,6 +35,13 @@ export default function Home() {
         >
           <IoLocationOutline size="48" />
           <p className="text-xl">Location</p>
+        </Link>
+        <Link
+          href="https://instagram.com/vinayakfenster.com?igshid=OGQ5ZDc2ODk2ZA=="
+          className="flex flex-col items-center col-span-2"
+        >
+          <BsInstagram size="48" />
+          <p className="text-xl">Instagram</p>
         </Link>
       </div>
     </div>
