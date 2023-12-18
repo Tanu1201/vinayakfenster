@@ -7,7 +7,7 @@ const comic = Comic_Neue({ subsets: ['latin'], weight: '700' })
 
 export default function Home() {
   return (
-    <div className="min-h-[100dvh] gap-12 flex justify-center items-center flex-col bg-white text-black">
+    <div className="gap-12 flex justify-center items-center flex-col bg-white text-black">
       <h1 className={`text-5xl ${comic.className}`}>Vinayak Fenster</h1>
       <div className="grid grid-cols-2 gap-24 gap-y-8 mt-12">
         <Link

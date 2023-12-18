@@ -5,7 +5,7 @@ import { IoIosStarOutline } from 'react-icons/io'
 
 const Home: NextPage = () => {
   return (
-    <div className="">
+    <>
       <div className="flex px-4 lg:px-16 flex-col-reverse md:items-center gap-8 md:flex-row mt-8">
         <div className="md:w-1/2 flex flex-col gap-4">
           <h1 className="font-semibold leading-tight text-5xl md:text-7xl">
@@ -254,7 +254,7 @@ const Home: NextPage = () => {
           />
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

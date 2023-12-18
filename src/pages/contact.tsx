@@ -1,0 +1,96 @@
+import { Button } from '@/components/UI/Button'
+import { NextPage } from 'next'
+import Link from 'next/link'
+import { AiOutlineClockCircle } from 'react-icons/ai'
+import { IoLocationOutline, IoMailOutline } from 'react-icons/io5'
+import { MdOutlineLocalPhone } from 'react-icons/md'
+
+const Contact: NextPage = () => {
+  return (
+    <div className="px-4 lg:px-16">
+      <h1 className="text-4xl leading-normal tracking-normal w-3/5 font-semibold text-[#00000050] ">
+        &apos;Let&apos;s Transform Your Space Together!&apos; Reach Out to
+        Vinayak Fenster Systems and Start the Conversation.
+      </h1>
+
+      <h2 className="text-4xl font-semibold mt-8 ">Get in Touch 👋</h2>
+
+      <div className="mt-8 flex flex-col md:flex-row items-center gap-8">
+        <div className="flex-1">
+          <form
+            className="grid grid-cols-1 gap-8 md:grid-cols-2"
+            onSubmit={e => e.preventDefault()}
+          >
+            <input
+              className="shadow-md outline-none rounded-md border p-2"
+              type="text"
+              placeholder="Your Name"
+            ></input>
+            <input
+              className="shadow-md outline-none rounded-md border p-2"
+              type="email"
+              placeholder="Email"
+            ></input>
+            <input
+              className="shadow-md outline-none rounded-md border p-2"
+              type="tel"
+              placeholder="Phone"
+            ></input>
+            <input
+              className="shadow-md outline-none rounded-md border p-2"
+              placeholder="Company Name"
+            ></input>
+            <textarea
+              placeholder="Message"
+              className="col-span-2 shadow-md outline-none rounded-md border p-2"
+            ></textarea>
+            <div>
+              <Button>Send Message</Button>
+            </div>
+          </form>
+        </div>
+        <div className="flex-1">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3297.336606946182!2d73.71291766115664!3d24.621546085730248!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3967e5a2f8b3a2e5%3A0xf0d6ac3ecf71d04a!2sVinayak%20Fenster%20Systems%20-%20uPVC%20and%20Aluminum%20Window%20Expert%2C%20Curtains%2C%20Blinds%2C%20Door%20Hardware!5e0!3m2!1sen!2sin!4v1702915913792!5m2!1sen!2sin"
+            width="600"
+            height="450"
+            className="border-0 rounded-xl"
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+      </div>
+
+      <h2 className="font-medium text-4xl mt-16">Office Address</h2>
+      <div className="mt-8 w-3/5 flex flex-col gap-8">
+        <div className="flex gap-4">
+          <IoLocationOutline size={24} />
+          <Link
+            href="https://maps.app.goo.gl/4biu3gyM5huYK9sc8"
+            target="_blank"
+          >
+            6, Baneda Castel, behind Mundra Elite, Meera Nagar, Udaipur,
+            Rajasthan (313001)
+          </Link>
+        </div>
+        <div className="flex gap-4">
+          <IoMailOutline size={24} />
+          <Link href="mailto:info@vinayakfenster.com">
+            info@vinayakfenster.com
+          </Link>
+        </div>
+        <div className="flex gap-4">
+          <MdOutlineLocalPhone size={24} />
+          <Link href="tel:+919694949875">+91-9694949875</Link>
+        </div>
+        <div className="flex gap-4">
+          <AiOutlineClockCircle size={24} />
+          <span>10:00 AM to 08:00 PM</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default Contact
