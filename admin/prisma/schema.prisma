@@ -1,0 +1,178 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  password  String
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  updatedAt DateTime @updatedAt @db.Timestamptz()
+
+  createdProducts       Product[]        @relation("productCreatedBy")
+  updatedProducts       Product[]        @relation("productUpdatedBy")
+  createdCategories     Category[]       @relation("categoryCreatedBy")
+  updatedCategories     Category[]       @relation("categoryUpdatedBy")
+  createdBrands         Brand[]          @relation("brandCreatedBy")
+  updatedBrands         Brand[]          @relation("brandUpdatedBy")
+  createdProductMedia   ProductMedia[]   @relation("productMediaCreatedBy")
+  updatedProductMedia   ProductMedia[]   @relation("productMediaUpdatedBy")
+  createdPortfolios     Portfolio[]      @relation("portfolioCreatedBy")
+  updatedPortfolios     Portfolio[]      @relation("portfolioUpdatedBy")
+  createdPortfolioMedia PortfolioMedia[] @relation("portfolioMediaCreatedBy")
+  updatedPortfolioMedia PortfolioMedia[] @relation("portfolioMediaUpdatedBy")
+  createdTestimonials   Testimonial[]    @relation("testimonialCreatedBy")
+  updatedTestimonials   Testimonial[]    @relation("testimonialUpdatedBy")
+
+  @@map("Users")
+}
+
+model Product {
+  id          String @id @default(uuid())
+  name        String
+  description String
+  slug        String
+
+  brandId    String?
+  categoryId String?
+
+  brand        Brand?         @relation(fields: [brandId], references: [id])
+  category     Category?      @relation(fields: [categoryId], references: [id])
+  productMedia ProductMedia[]
+
+  createdById String
+  updatedById String
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+  createdBy   User     @relation("productCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User     @relation("productUpdatedBy", fields: [updatedById], references: [id])
+
+  @@map("Products")
+}
+
+model Category {
+  id     String @id @default(uuid())
+  name   String
+  slug   String
+  imgUrl String
+
+  products Product[]
+
+  createdById String
+  updatedById String
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+  createdBy   User     @relation("categoryCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User     @relation("categoryUpdatedBy", fields: [updatedById], references: [id])
+
+  @@map("Categories")
+}
+
+model Brand {
+  id     String @id @default(uuid())
+  name   String
+  slug   String
+  imgUrl String
+
+  products Product[]
+
+  createdById String
+  updatedById String
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+  createdBy   User     @relation("brandCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User     @relation("brandUpdatedBy", fields: [updatedById], references: [id])
+
+  @@map("Brands")
+}
+
+model ProductMedia {
+  id        String @id @default(uuid())
+  url       String
+  type      String
+  productId String
+
+  product Product @relation(fields: [productId], references: [id])
+
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+  createdById String
+  updatedById String
+  createdBy   User     @relation("productMediaCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User     @relation("productMediaUpdatedBy", fields: [updatedById], references: [id])
+
+  @@map("ProductMedia")
+}
+
+model Portfolio {
+  id          String @id @default(uuid())
+  name        String
+  description String
+
+  portfolioMedia PortfolioMedia[]
+
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+  createdById String
+  updatedById String
+  createdBy   User     @relation("portfolioCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User     @relation("portfolioUpdatedBy", fields: [updatedById], references: [id])
+
+  @@map("Portfolios")
+}
+
+model PortfolioMedia {
+  id          String @id @default(uuid())
+  url         String
+  type        String
+  portfolioId String
+
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id])
+
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+  createdById String
+  updatedById String
+  createdBy   User     @relation("portfolioMediaCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User     @relation("portfolioMediaUpdatedBy", fields: [updatedById], references: [id])
+
+  @@map("PortfolioMedia")
+}
+
+model Testimonial {
+  id          String  @id @default(uuid())
+  name        String
+  description String
+  imgUrl      String?
+
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+  createdById String
+  updatedById String
+  createdBy   User     @relation("testimonialCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User     @relation("testimonialUpdatedBy", fields: [updatedById], references: [id])
+
+  @@map("Testimonials")
+}
+
+model Enquiry {
+  id          String @id @default(uuid())
+  name        String
+  email       String
+  phone       String
+  description String
+
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  updatedAt DateTime @updatedAt @db.Timestamptz()
+
+  @@map("Enquiries")
+}
