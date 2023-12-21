@@ -1,7 +1,9 @@
+'use client'
+
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import { FC, useEffect, useState } from 'react'
 import { CgClose } from 'react-icons/cg'
 import { HiOutlineMenuAlt3 } from 'react-icons/hi'
@@ -35,8 +37,7 @@ const checkRoute = (currRoute: string, link: string) => {
 
 export const Header: FC = () => {
   const [phoneMenuOpen, setPhoneMenuOpen] = useState(false)
-  const router = useRouter()
-  const currRoute = router.route
+  const currRoute = usePathname() || '/'
 
   useEffect(() => {
     if (phoneMenuOpen) {

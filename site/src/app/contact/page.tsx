@@ -1,9 +1,9 @@
-import { Button } from '@/components/UI/Button'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import { AiOutlineClockCircle } from 'react-icons/ai'
 import { IoLocationOutline, IoMailOutline } from 'react-icons/io5'
 import { MdOutlineLocalPhone } from 'react-icons/md'
+import { ContactForm } from './components/ContactForm'
 
 const Contact: NextPage = () => {
   return (
@@ -17,37 +17,7 @@ const Contact: NextPage = () => {
 
       <div className="mt-8 flex flex-col md:flex-row items-center gap-8">
         <div className="flex-1">
-          <form
-            className="grid grid-cols-1 gap-8 md:grid-cols-2"
-            onSubmit={e => e.preventDefault()}
-          >
-            <input
-              className="shadow-md outline-none rounded-md border p-2"
-              type="text"
-              placeholder="Your Name"
-            ></input>
-            <input
-              className="shadow-md outline-none rounded-md border p-2"
-              type="email"
-              placeholder="Email"
-            ></input>
-            <input
-              className="shadow-md outline-none rounded-md border p-2"
-              type="tel"
-              placeholder="Phone"
-            ></input>
-            <input
-              className="shadow-md outline-none rounded-md border p-2"
-              placeholder="Company Name"
-            ></input>
-            <textarea
-              placeholder="Message"
-              className="col-span-2 shadow-md outline-none rounded-md border p-2"
-            ></textarea>
-            <div>
-              <Button>Send Message</Button>
-            </div>
-          </form>
+          <ContactForm />
         </div>
         <div className="flex-1">
           <iframe
