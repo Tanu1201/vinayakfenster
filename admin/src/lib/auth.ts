@@ -1,15 +1,12 @@
+import { prisma } from '@/lib/db'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
+import { compare } from 'bcryptjs'
 import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions
 } from 'next-auth'
-import EmailProvider from 'next-auth/providers/email'
-import GitHubProvider from 'next-auth/providers/github'
-import GoogleProvider from 'next-auth/providers/google'
-
-import { env } from '@/env.mjs'
-import { prisma } from '@/lib/db'
+import CredentialsProvider from 'next-auth/providers/credentials'
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -49,24 +46,44 @@ export const authOptions: NextAuthOptions = {
   },
   adapter: PrismaAdapter(prisma),
   providers: [
-    EmailProvider({
-      server: {
-        host: env.EMAIL_SERVER_HOST,
-        port: env.EMAIL_SERVER_PORT,
-        auth: {
-          user: env.EMAIL_SERVER_USER,
-          pass: env.EMAIL_SERVER_PASSWORD
+    CredentialsProvider({
+      name: 'Credentials',
+      credentials: {
+        username: {
+          label: 'Email',
+          type: 'text',
+          placeholder: 'Enter email'
+        },
+        password: {
+          label: 'Password',
+          type: 'password',
+          placeholder: 'Enter Password'
         }
       },
-      from: env.EMAIL_FROM
-    }),
-    GoogleProvider({
-      clientId: env.GOOGLE_ID,
-      clientSecret: env.GOOGLE_SECRET
-    }),
-    GitHubProvider({
-      clientId: env.GITHUB_ID,
-      clientSecret: env.GITHUB_SECRET
+      async authorize(credentials) {
+        if (!credentials) return null
+        const isNum = !isNaN(Number(credentials.username))
+        const user = await prisma.user.findFirst({
+          where: {
+            email: !isNum ? credentials.username : undefined,
+            active: true
+          }
+        })
+        if (
+          user &&
+          user.password &&
+          (await compare(credentials.password, user.password))
+        ) {
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            image: user.image
+          }
+        } else {
+          return null
+        }
+      }
     })
   ]
 }

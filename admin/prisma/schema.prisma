@@ -49,6 +49,8 @@ model User {
     name          String?
     email         String?   @unique
     emailVerified DateTime? @db.Timestamptz()
+    active        Boolean   @default(true)
+    password      String
     image         String?
 
     createdAt DateTime @default(now()) @db.Timestamptz()
@@ -70,6 +72,8 @@ model User {
     updatedPortfolioMedia PortfolioMedia[] @relation("portfolioMediaUpdatedBy")
     createdTestimonials   Testimonial[]    @relation("testimonialCreatedBy")
     updatedTestimonials   Testimonial[]    @relation("testimonialUpdatedBy")
+    createdTasks          Task[]           @relation("createdTasks")
+    updatedTasks          Task[]           @relation("updatedTasks")
 
     @@map("Users")
 }
@@ -91,6 +95,8 @@ model Resource {
 
     createdAt DateTime @default(now()) @db.Timestamptz()
     updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
+    task      Task?    @relation("taskImages", fields: [taskId], references: [id])
+    taskId    String?
 
     @@map("Resources")
 }
@@ -234,4 +240,30 @@ model Enquiry {
     updatedAt DateTime @updatedAt @db.Timestamptz()
 
     @@map("Enquiries")
+}
+
+enum TaskStatus {
+    Backlog
+    Todo
+    In_Progress
+    Done
+    Cancelled
+}
+
+model Task {
+    id          String     @id @default(cuid())
+    title       String
+    status      TaskStatus
+    description Json?
+
+    images Resource[] @relation("taskImages")
+
+    createdAt   DateTime @default(now()) @db.Timestamptz()
+    updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
+    createdById String
+    createdBy   User     @relation("createdTasks", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String
+    updatedBy   User     @relation("updatedTasks", fields: [updatedById], references: [id], onDelete: Cascade)
+
+    @@map("Tasks")
 }

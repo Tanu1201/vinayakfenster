@@ -15,7 +15,10 @@ import { toast } from '@/components/ui/use-toast'
 import { cn } from '@/lib/cn'
 
 const userAuthSchema = z.object({
-  email: z.string().email()
+  email: z.string().email(),
+  password: z
+    .string()
+    .min(8, { message: 'Password must be at least 8 characters long.' })
 })
 
 type FormData = z.infer<typeof userAuthSchema>
@@ -34,8 +37,6 @@ export const UserAuthForm: FC = ({
     resolver: zodResolver(userAuthSchema)
   })
   const [isLoading, setIsLoading] = useState(false)
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
-  const [isGithubLoading, setIsGithubLoading] = useState(false)
 
   const searchParams = useSearchParams()
 
@@ -87,66 +88,30 @@ export const UserAuthForm: FC = ({
                 {errors.email.message}
               </p>
             )}
+            <Input
+              id="password"
+              placeholder="Password"
+              type="password"
+              autoComplete="password"
+              autoCorrect="off"
+              disabled={isLoading}
+              className="mt-2"
+              {...register('password')}
+            />
+            {errors?.password && (
+              <p className="px-1 text-xs text-red-600">
+                {errors.password.message}
+              </p>
+            )}
           </div>
-          <Button
-            disabled={isLoading || isGoogleLoading || isGithubLoading}
-            type="submit"
-          >
+          <Button disabled={isLoading} type="submit" className="mt-2">
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Sign in with Email
+            Sign in
           </Button>
         </div>
       </form>
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
-        </div>
-      </div>
-      <div className="grid gap-2">
-        <Button
-          variant="outline"
-          onClick={async () => {
-            setIsGoogleLoading(true)
-            await signIn('google', {
-              callbackUrl: searchParams?.get('from') || '/dashboard'
-            })
-            setIsGoogleLoading(false)
-          }}
-          disabled={isLoading || isGoogleLoading || isGithubLoading}
-        >
-          {isGoogleLoading ? (
-            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Icons.google className="mr-2 h-4 w-4" />
-          )}
-          Google
-        </Button>
-        <Button
-          variant="outline"
-          onClick={async () => {
-            setIsGithubLoading(true)
-            await signIn('github', {
-              callbackUrl: searchParams?.get('from') || '/dashboard'
-            })
-            setIsGithubLoading(false)
-          }}
-          disabled={isLoading || isGoogleLoading || isGithubLoading}
-        >
-          {isGithubLoading ? (
-            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Icons.github className="mr-2 h-4 w-4" />
-          )}
-          Github
-        </Button>
-      </div>
     </div>
   )
 }

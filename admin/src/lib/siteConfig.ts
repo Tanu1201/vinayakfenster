@@ -1,4 +1,4 @@
 export const siteConfig = {
-  name: 'admin',
-  description: 'admin app'
+  name: 'Vinayak Fenster Admin',
+  description: 'Vinayak Fenster Admin App'
 }

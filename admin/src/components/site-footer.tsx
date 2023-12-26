@@ -12,16 +12,17 @@ export const SiteFooter: FC<HTMLAttributes<HTMLElement>> = ({ className }) => {
         <div className="flex flex-col items-center gap-2 sm:flex-row">
           <Icons.logo />
           <p className="text-center text-sm leading-loose sm:text-left">
-            {siteConfig.name}. Built by{' '}
+            {siteConfig.name}.
+            {/* Built by{' '}
             <a
               href="https://github.com/ejekanshjain"
               target="_blank"
               rel="noreferrer"
               className="font-medium underline underline-offset-4"
             >
-              ejekanshjain
+              jayeshkugsiya
             </a>
-            .
+            . */}
           </p>
         </div>
         <DarkModeToggle />
