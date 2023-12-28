@@ -171,6 +171,7 @@ export const Render: FC<{
     if (!task?.description) return ''
     return edjsParser.parse(task.description as any).join('')
   }, [task?.description])
+  console.log(editorHTML)
 
   async function onSubmit(data: FormData) {
     setIsSaving(true)
