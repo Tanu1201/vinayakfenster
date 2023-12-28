@@ -32,30 +32,47 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 import { toast } from '@/components/ui/use-toast'
 import { formatDateTime, timesAgo } from '@/lib/formatDate'
+import { GetBrandsFnDataType } from '../../brands/actions'
+import { GetCategoriesFnDataType } from '../../categories/actions'
 import {
-  GetCategoryFnDataType,
-  createCategory,
-  deleteCategory,
-  updateCategory
+  GetProductFnDataType,
+  createProduct,
+  deleteProduct,
+  updateProduct
 } from './actions'
 
-const Categorieschema = z.object({
+const ProductSchema = z.object({
   name: z.string().min(1),
-  slug: z.string().min(1)
+  slug: z.string().min(1),
+  description: z.string().min(1),
+  brandId: z.string().optional(),
+  categoryId: z.string().optional()
 })
 
-type FormData = z.infer<typeof Categorieschema>
+type FormData = z.infer<typeof ProductSchema>
 
 export const Render: FC<{
-  category: GetCategoryFnDataType | undefined
-}> = ({ category }) => {
+  product: GetProductFnDataType | undefined
+  brands: GetBrandsFnDataType['brands'] | undefined
+  categories: GetCategoriesFnDataType['categories'] | undefined
+}> = ({ product, brands, categories }) => {
   const form = useForm<FormData>({
-    resolver: zodResolver(Categorieschema),
+    resolver: zodResolver(ProductSchema),
     defaultValues: {
-      name: category?.name ?? '',
-      slug: category?.slug ?? ''
+      name: product?.name ?? '',
+      slug: product?.slug ?? '',
+      description: product?.description ?? '',
+      brandId: product?.brand?.id ?? '',
+      categoryId: product?.category?.id ?? ''
     }
   })
   const router = useRouter()
@@ -65,21 +82,21 @@ export const Render: FC<{
   async function onSubmit(data: FormData) {
     setIsSaving(true)
     try {
-      if (!category) {
-        const newId = await createCategory(data)
-        router.replace(`/categories/${newId}`)
+      if (!product) {
+        const newId = await createProduct(data)
+        router.replace(`/products/${newId}`)
       } else {
-        await updateCategory({
-          id: category.id,
+        await updateProduct({
+          id: product.id,
           ...data
         })
       }
       toast({
-        title: 'category saved'
+        title: 'product saved'
       })
     } catch (err) {
       toast({
-        title: 'Error saving category',
+        title: 'Error saving product',
         variant: 'destructive'
       })
     }
@@ -88,9 +105,7 @@ export const Render: FC<{
 
   return (
     <Shell>
-      <Heading
-        heading={category ? category.name || category.id : 'New category'}
-      />
+      <Heading heading={product ? product.name || product.id : 'New product'} />
       <Form {...form}>
         <form
           className="grid grid-cols-1 gap-3 md:grid-cols-2"
@@ -109,7 +124,7 @@ export const Render: FC<{
               )}
               <span>Save</span>
             </Button>
-            {category ? (
+            {product ? (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
@@ -140,14 +155,14 @@ export const Render: FC<{
                       onClick={async () => {
                         setIsDeleting(true)
                         try {
-                          await deleteCategory(category.id)
+                          await deleteProduct(product.id)
                           toast({
-                            title: 'category deleted'
+                            title: 'product deleted'
                           })
-                          router.push('/categories')
+                          router.push('/products')
                         } catch (err) {
                           toast({
-                            title: 'Error deleting category',
+                            title: 'Error deleting product',
                             variant: 'destructive'
                           })
                         }
@@ -160,8 +175,8 @@ export const Render: FC<{
                 </AlertDialogContent>
               </AlertDialog>
             ) : undefined}
-            {category ? (
-              <Link href="/categories/new">
+            {product ? (
+              <Link href="/products/new">
                 <Button
                   type="button"
                   disabled={isSaving || isDeleting}
@@ -215,30 +230,110 @@ export const Render: FC<{
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="Enter description"
+                    autoCapitalize="none"
+                    autoComplete="description"
+                    autoCorrect="off"
+                    disabled={isSaving}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="brandId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Brand</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={isSaving}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select brand" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {brands?.map(({ id, name }) => (
+                      <SelectItem key={id} value={id}>
+                        {name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="categoryId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Category</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={isSaving}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {categories?.map(({ id, name }) => (
+                      <SelectItem key={id} value={id}>
+                        {name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </form>
       </Form>
-      {category ? (
+      {product ? (
         <SystemInfo
           items={[
             {
               label: 'Id',
-              value: category.id
+              value: product.id
             },
             {
               label: 'Created At',
-              value: formatDateTime(category.createdAt)
+              value: formatDateTime(product.createdAt)
             },
             {
               label: 'Updated At',
-              value: timesAgo(category.updatedAt)
+              value: timesAgo(product.updatedAt)
             },
             {
               label: 'Created By',
-              value: category.createdBy.name
+              value: product.createdBy.name
             },
             {
               label: 'Updated By',
-              value: category.updatedBy.name
+              value: product.updatedBy.name
             }
           ]}
         />

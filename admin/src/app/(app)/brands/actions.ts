@@ -1,12 +1,12 @@
 'use server'
 
-import { Category } from '@prisma/client'
+import { Brand } from '@prisma/client'
 
 import { getAuthSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { UnwrapPromise } from '@/types/UnwrapPromise'
 
-export const getCategories = async ({
+export const getBrands = async ({
   page,
   limit,
   sortBy,
@@ -15,7 +15,7 @@ export const getCategories = async ({
 }: {
   page: number
   limit: number
-  sortBy?: keyof Category
+  sortBy?: keyof Brand
   sortOrder?: 'asc' | 'desc'
   name?: string
 }) => {
@@ -25,8 +25,8 @@ export const getCategories = async ({
   const where = {
     name: name ? { contains: name, mode: 'insensitive' as const } : undefined
   }
-  const [categories, total] = await Promise.all([
-    prisma.category.findMany({
+  const [brands, total] = await Promise.all([
+    prisma.brand.findMany({
       where,
       select: {
         id: true,
@@ -40,14 +40,12 @@ export const getCategories = async ({
         [sortBy || 'createdAt']: sortOrder || 'desc'
       }
     }),
-    prisma.category.count({
+    prisma.brand.count({
       where
     })
   ])
 
-  return { categories, total }
+  return { brands, total }
 }
 
-export type GetCategoriesFnDataType = UnwrapPromise<
-  ReturnType<typeof getCategories>
->
+export type GetBrandsFnDataType = UnwrapPromise<ReturnType<typeof getBrands>>

@@ -26,8 +26,10 @@ import {
   Plus,
   PlusCircle,
   Save,
+  Server,
   Settings,
   Settings2,
+  ShoppingCart,
   Sun,
   Trash,
   User,
@@ -81,5 +83,7 @@ export const Icons = {
   chevronsRight: ChevronsRight,
   chevronRight: ChevronRight,
   mixer: Settings2,
-  categories: Boxes
+  categories: Boxes,
+  brands: Server,
+  products: ShoppingCart
 }

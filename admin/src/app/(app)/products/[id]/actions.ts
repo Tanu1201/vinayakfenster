@@ -6,87 +6,105 @@ import { getAuthSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { UnwrapPromise } from '@/types/UnwrapPromise'
 
-export const getCategory = async (id: string) => {
+export const getProduct = async (id: string) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
 
-  return await prisma.category.findUnique({
+  return await prisma.product.findUnique({
     where: {
       id
     },
     include: {
       createdBy: true,
-      updatedBy: true
+      updatedBy: true,
+      brand: true,
+      category: true
     }
   })
 }
 
-export type GetCategoryFnDataType = UnwrapPromise<
-  ReturnType<typeof getCategory>
->
+export type GetProductFnDataType = UnwrapPromise<ReturnType<typeof getProduct>>
 
-export const createCategory = async ({
+export const createProduct = async ({
   name,
-  slug
+  slug,
+  description,
+  brandId,
+  categoryId
 }: {
   name: string
   slug: string
+  description: string
+  brandId?: string
+  categoryId?: string
 }) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
 
-  const { id } = await prisma.category.create({
+  const { id } = await prisma.product.create({
     data: {
       name,
       slug,
+      description,
+      brandId,
+      categoryId,
       createdById: session.user.id,
       updatedById: session.user.id
     }
   })
 
-  revalidatePath('/categories')
-  revalidatePath(`/categories/${id}`)
+  revalidatePath('/products')
+  revalidatePath(`/products/${id}`)
 
   return id
 }
 
-export const updateCategory = async ({
+export const updateProduct = async ({
   id,
   name,
-  slug
+  slug,
+  description,
+  brandId,
+  categoryId
 }: {
   id: string
   name: string
   slug: string
+  description: string
+  brandId?: string
+  categoryId?: string
 }) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
 
-  await prisma.category.update({
+  await prisma.product.update({
     where: {
       id
     },
     data: {
       name,
       slug,
+      description,
+      brandId,
+      categoryId,
       updatedById: session.user.id
     }
   })
 
-  revalidatePath('/categories')
-  revalidatePath(`/categories/${id}`)
+  revalidatePath('/products')
+  revalidatePath(`/products/${id}`)
 }
 
-export const deleteCategory = async (id: string) => {
+export const deleteProduct = async (id: string) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
 
-  await prisma.category.delete({
+  await prisma.product.delete({
     where: {
       id
     }
   })
 
-  revalidatePath('/categories')
-  revalidatePath(`/categories/${id}`)
+  revalidatePath('/products')
+  revalidatePath(`/products/${id}`)
 }

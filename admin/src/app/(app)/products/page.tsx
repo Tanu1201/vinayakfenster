@@ -1,15 +1,15 @@
-import { Category } from '@prisma/client'
+import { Product } from '@prisma/client'
 import { Metadata } from 'next'
 
 import { siteConfig } from '@/lib/siteConfig'
-import { getCategories } from './actions'
+import { getProducts } from './actions'
 import { Render } from './render'
 
 export const metadata: Metadata = {
-  title: 'Categories' + ' | ' + siteConfig.name
+  title: 'Products' + ' | ' + siteConfig.name
 }
 
-const Categories = async ({
+const Products = async ({
   searchParams
 }: {
   searchParams: {
@@ -25,14 +25,14 @@ const Categories = async ({
   const [sortBy, sortOrder] =
     typeof searchParams.sort === 'string'
       ? (searchParams.sort.split('.') as [
-          keyof Category | undefined,
+          keyof Product | undefined,
           'asc' | 'desc' | undefined
         ])
       : []
 
   const name = searchParams.name
 
-  const data = await getCategories({
+  const data = await getProducts({
     page,
     limit,
     sortBy,
@@ -43,4 +43,4 @@ const Categories = async ({
   return <Render data={data} />
 }
 
-export default Categories
+export default Products

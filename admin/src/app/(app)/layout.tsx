@@ -27,6 +27,14 @@ const Layout = async ({ children }: { children: ReactNode }) => {
               {
                 title: 'Users',
                 href: '/users'
+              },
+              {
+                title: 'Categories',
+                href: '/categories'
+              },
+              {
+                title: 'Brands',
+                href: '/brands'
               }
             ]}
           />
@@ -38,9 +46,9 @@ const Layout = async ({ children }: { children: ReactNode }) => {
             />
             <UserAccountNav
               user={{
-                name: 'Jayesh Kugsiya' // session.user.name,
-                // email: session.user.email,
-                // image: session.user.image,
+                name: session.user.name,
+                email: session.user.email,
+                image: session.user.image
               }}
             />
           </div>
@@ -65,6 +73,16 @@ const Layout = async ({ children }: { children: ReactNode }) => {
                 title: 'Categories',
                 href: '/categories',
                 icon: 'categories'
+              },
+              {
+                title: 'Brands',
+                href: '/brands',
+                icon: 'brands'
+              },
+              {
+                title: 'Products',
+                href: '/products',
+                icon: 'products'
               },
               {
                 title: 'Settings',

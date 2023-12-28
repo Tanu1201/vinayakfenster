@@ -68,6 +68,7 @@ model Product {
     createdBy   User     @relation("productCreatedBy", fields: [createdById], references: [id])
     updatedBy   User     @relation("productUpdatedBy", fields: [updatedById], references: [id])
 
+    @@unique([slug])
     @@map("Products")
 }
 
@@ -85,6 +86,7 @@ model Category {
     createdBy   User     @relation("categoryCreatedBy", fields: [createdById], references: [id])
     updatedBy   User     @relation("categoryUpdatedBy", fields: [updatedById], references: [id])
 
+    @@unique([slug])
     @@map("Categories")
 }
 
@@ -102,6 +104,7 @@ model Brand {
     createdBy   User     @relation("brandCreatedBy", fields: [createdById], references: [id])
     updatedBy   User     @relation("brandUpdatedBy", fields: [updatedById], references: [id])
 
+    @@unique([slug])
     @@map("Brands")
 }
 

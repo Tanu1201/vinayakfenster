@@ -6,11 +6,11 @@ import { getAuthSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { UnwrapPromise } from '@/types/UnwrapPromise'
 
-export const getCategory = async (id: string) => {
+export const getBrand = async (id: string) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
 
-  return await prisma.category.findUnique({
+  return await prisma.brand.findUnique({
     where: {
       id
     },
@@ -21,11 +21,9 @@ export const getCategory = async (id: string) => {
   })
 }
 
-export type GetCategoryFnDataType = UnwrapPromise<
-  ReturnType<typeof getCategory>
->
+export type GetBrandFnDataType = UnwrapPromise<ReturnType<typeof getBrand>>
 
-export const createCategory = async ({
+export const createBrand = async ({
   name,
   slug
 }: {
@@ -35,7 +33,7 @@ export const createCategory = async ({
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
 
-  const { id } = await prisma.category.create({
+  const { id } = await prisma.brand.create({
     data: {
       name,
       slug,
@@ -44,13 +42,13 @@ export const createCategory = async ({
     }
   })
 
-  revalidatePath('/categories')
-  revalidatePath(`/categories/${id}`)
+  revalidatePath('/brands')
+  revalidatePath(`/brands/${id}`)
 
   return id
 }
 
-export const updateCategory = async ({
+export const updateBrand = async ({
   id,
   name,
   slug
@@ -62,7 +60,7 @@ export const updateCategory = async ({
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
 
-  await prisma.category.update({
+  await prisma.brand.update({
     where: {
       id
     },
@@ -73,20 +71,20 @@ export const updateCategory = async ({
     }
   })
 
-  revalidatePath('/categories')
-  revalidatePath(`/categories/${id}`)
+  revalidatePath('/brands')
+  revalidatePath(`/brands/${id}`)
 }
 
-export const deleteCategory = async (id: string) => {
+export const deleteBrand = async (id: string) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
 
-  await prisma.category.delete({
+  await prisma.brand.delete({
     where: {
       id
     }
   })
 
-  revalidatePath('/categories')
-  revalidatePath(`/categories/${id}`)
+  revalidatePath('/brands')
+  revalidatePath(`/brands/${id}`)
 }

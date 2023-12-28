@@ -35,27 +35,27 @@ import { Input } from '@/components/ui/input'
 import { toast } from '@/components/ui/use-toast'
 import { formatDateTime, timesAgo } from '@/lib/formatDate'
 import {
-  GetCategoryFnDataType,
-  createCategory,
-  deleteCategory,
-  updateCategory
+  GetBrandFnDataType,
+  createBrand,
+  deleteBrand,
+  updateBrand
 } from './actions'
 
-const Categorieschema = z.object({
+const BrandSchema = z.object({
   name: z.string().min(1),
   slug: z.string().min(1)
 })
 
-type FormData = z.infer<typeof Categorieschema>
+type FormData = z.infer<typeof BrandSchema>
 
 export const Render: FC<{
-  category: GetCategoryFnDataType | undefined
-}> = ({ category }) => {
+  brand: GetBrandFnDataType | undefined
+}> = ({ brand: brand }) => {
   const form = useForm<FormData>({
-    resolver: zodResolver(Categorieschema),
+    resolver: zodResolver(BrandSchema),
     defaultValues: {
-      name: category?.name ?? '',
-      slug: category?.slug ?? ''
+      name: brand?.name ?? '',
+      slug: brand?.slug ?? ''
     }
   })
   const router = useRouter()
@@ -65,21 +65,21 @@ export const Render: FC<{
   async function onSubmit(data: FormData) {
     setIsSaving(true)
     try {
-      if (!category) {
-        const newId = await createCategory(data)
-        router.replace(`/categories/${newId}`)
+      if (!brand) {
+        const newId = await createBrand(data)
+        router.replace(`/brands/${newId}`)
       } else {
-        await updateCategory({
-          id: category.id,
+        await updateBrand({
+          id: brand.id,
           ...data
         })
       }
       toast({
-        title: 'category saved'
+        title: 'brand saved'
       })
     } catch (err) {
       toast({
-        title: 'Error saving category',
+        title: 'Error saving brand',
         variant: 'destructive'
       })
     }
@@ -88,9 +88,7 @@ export const Render: FC<{
 
   return (
     <Shell>
-      <Heading
-        heading={category ? category.name || category.id : 'New category'}
-      />
+      <Heading heading={brand ? brand.name || brand.id : 'New brand'} />
       <Form {...form}>
         <form
           className="grid grid-cols-1 gap-3 md:grid-cols-2"
@@ -109,7 +107,7 @@ export const Render: FC<{
               )}
               <span>Save</span>
             </Button>
-            {category ? (
+            {brand ? (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
@@ -140,14 +138,14 @@ export const Render: FC<{
                       onClick={async () => {
                         setIsDeleting(true)
                         try {
-                          await deleteCategory(category.id)
+                          await deleteBrand(brand.id)
                           toast({
-                            title: 'category deleted'
+                            title: 'brand deleted'
                           })
-                          router.push('/categories')
+                          router.push('/brands')
                         } catch (err) {
                           toast({
-                            title: 'Error deleting category',
+                            title: 'Error deleting brand',
                             variant: 'destructive'
                           })
                         }
@@ -160,8 +158,8 @@ export const Render: FC<{
                 </AlertDialogContent>
               </AlertDialog>
             ) : undefined}
-            {category ? (
-              <Link href="/categories/new">
+            {brand ? (
+              <Link href="/brands/new">
                 <Button
                   type="button"
                   disabled={isSaving || isDeleting}
@@ -217,28 +215,28 @@ export const Render: FC<{
           />
         </form>
       </Form>
-      {category ? (
+      {brand ? (
         <SystemInfo
           items={[
             {
               label: 'Id',
-              value: category.id
+              value: brand.id
             },
             {
               label: 'Created At',
-              value: formatDateTime(category.createdAt)
+              value: formatDateTime(brand.createdAt)
             },
             {
               label: 'Updated At',
-              value: timesAgo(category.updatedAt)
+              value: timesAgo(brand.updatedAt)
             },
             {
               label: 'Created By',
-              value: category.createdBy.name
+              value: brand.createdBy.name
             },
             {
               label: 'Updated By',
-              value: category.updatedBy.name
+              value: brand.updatedBy.name
             }
           ]}
         />
