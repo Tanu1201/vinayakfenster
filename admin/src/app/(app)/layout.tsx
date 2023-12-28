@@ -1,4 +1,3 @@
-import { notFound } from 'next/navigation'
 import { ReactNode } from 'react'
 
 import { AppNavCommand } from '@/components/app-nav-command'
@@ -7,6 +6,7 @@ import { SideNav } from '@/components/side-nav'
 import { SiteFooter } from '@/components/site-footer'
 import { UserAccountNav } from '@/components/user-account-nav'
 import { getAuthSession } from '@/lib/auth'
+import { notFound } from 'next/navigation'
 
 const Layout = async ({ children }: { children: ReactNode }) => {
   const session = await getAuthSession()
@@ -27,10 +27,6 @@ const Layout = async ({ children }: { children: ReactNode }) => {
               {
                 title: 'Users',
                 href: '/users'
-              },
-              {
-                title: 'Tasks',
-                href: '/tasks'
               }
             ]}
           />
@@ -42,9 +38,9 @@ const Layout = async ({ children }: { children: ReactNode }) => {
             />
             <UserAccountNav
               user={{
-                name: session.user.name,
-                image: session.user.image,
-                email: session.user.email
+                name: 'Jayesh Kugsiya' // session.user.name,
+                // email: session.user.email,
+                // image: session.user.image,
               }}
             />
           </div>
@@ -66,9 +62,9 @@ const Layout = async ({ children }: { children: ReactNode }) => {
                 icon: 'user'
               },
               {
-                title: 'Tasks',
-                href: '/tasks',
-                icon: 'task'
+                title: 'Categories',
+                href: '/categories',
+                icon: 'categories'
               },
               {
                 title: 'Settings',

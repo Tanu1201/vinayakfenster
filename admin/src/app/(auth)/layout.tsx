@@ -6,7 +6,6 @@ import { getAuthSession } from '@/lib/auth'
 
 const AuthLayout = async ({ children }: { children: ReactNode }) => {
   const session = await getAuthSession()
-
   if (session?.user) return redirect('/dashboard')
 
   return (

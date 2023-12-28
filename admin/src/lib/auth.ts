@@ -1,5 +1,4 @@
 import { prisma } from '@/lib/db'
-import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { compare } from 'bcryptjs'
 import {
   getServerSession,
@@ -34,17 +33,38 @@ export const authOptions: NextAuthOptions = {
     signIn: '/login'
   },
   callbacks: {
-    session({ session, user }) {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: user.id
+    async session({ session, user, token }) {
+      if (session.user) {
+        if (user) {
+          session.user.id = user.id
+        }
+        if (token?.user) {
+          session.user.id = (token.user as { id: string }).id
+
+          // handle when user get inactivated
+          const u = await prisma.user.findFirst({
+            where: {
+              id: session.user.id,
+              active: true
+            },
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          })
+          if (!u) throw new Error('Invalid session')
+          session.user.name = u.name
+          session.user.email = u.email
         }
       }
+      return session
+    },
+    jwt({ token, user }) {
+      user && (token.user = user)
+      return token
     }
   },
-  adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -62,10 +82,9 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials) return null
-        const isNum = !isNaN(Number(credentials.username))
         const user = await prisma.user.findFirst({
           where: {
-            email: !isNum ? credentials.username : undefined,
+            email: credentials.username,
             active: true
           }
         })

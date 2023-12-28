@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { getAuthSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { UnwrapPromise } from '@/types/UnwrapPromise'
+import { hash } from 'bcryptjs'
 
 export const getUser = async (id: string) => {
   const session = await getAuthSession()
@@ -21,10 +22,12 @@ export type GetUserFnDataType = UnwrapPromise<ReturnType<typeof getUser>>
 
 export const createUser = async ({
   name,
-  email
+  email,
+  password
 }: {
   name: string
   email: string
+  password: string
 }) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
@@ -32,7 +35,8 @@ export const createUser = async ({
   const { id } = await prisma.user.create({
     data: {
       name,
-      email
+      email,
+      password: await hash(password, 10)
     }
   })
 

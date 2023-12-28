@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { categoryouter } from 'next/navigation'
 import { FC, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -35,55 +35,51 @@ import { Input } from '@/components/ui/input'
 import { toast } from '@/components/ui/use-toast'
 import { formatDateTime, timesAgo } from '@/lib/formatDate'
 import {
-  GetUserFnDataType,
-  createUser,
-  deleteUser,
-  updateUser
+  GetCategoryFnDataType,
+  createCategory,
+  deleteCategory,
+  updateCategory
 } from './actions'
 
-const UserSchema = z.object({
-  name: z.string().nonempty(),
-  email: z.string().email(),
-  password: z.string().min(8, {
-    message: 'Password must be at least 8 characters long.'
-  })
+const CategorySchema = z.object({
+  name: z.string().min(1),
+  slug: z.string().min(1)
 })
 
-type FormData = z.infer<typeof UserSchema>
+type FormData = z.infer<typeof CategorySchema>
 
 export const Render: FC<{
-  user: GetUserFnDataType | undefined
-}> = ({ user }) => {
+  category: GetCategoryFnDataType | undefined
+}> = ({ category }) => {
   const form = useForm<FormData>({
-    resolver: zodResolver(UserSchema),
+    resolver: zodResolver(CategorySchema),
     defaultValues: {
-      name: user?.name ?? '',
-      email: user?.email ?? '',
-      password: user?.password
+      name: category?.name ?? '',
+      slug: category?.slug ?? ''
     }
   })
-  const router = useRouter()
+  const router = categoryouter()
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
   async function onSubmit(data: FormData) {
     setIsSaving(true)
     try {
-      if (!user) {
-        const newId = await createUser(data)
-        router.replace(`/users/${newId}`)
+      if (!category) {
+        const newId = await createCategory(data)
+        router.replace(`/categories/${newId}`)
       } else {
-        await updateUser({
-          id: user.id,
+        await updateCategory({
+          id: category.id,
           ...data
         })
       }
       toast({
-        title: 'User saved'
+        title: 'category saved'
       })
     } catch (err) {
       toast({
-        title: 'Error saving user',
+        title: 'Error saving category',
         variant: 'destructive'
       })
     }
@@ -93,7 +89,11 @@ export const Render: FC<{
   return (
     <Shell>
       <Heading
-        heading={user ? user.name || user.email || user.id : 'New User'}
+        heading={
+          category
+            ? category.name || category.email || category.id
+            : 'New category'
+        }
       />
       <Form {...form}>
         <form
@@ -113,7 +113,7 @@ export const Render: FC<{
               )}
               <span>Save</span>
             </Button>
-            {user ? (
+            {category ? (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
@@ -144,14 +144,14 @@ export const Render: FC<{
                       onClick={async () => {
                         setIsDeleting(true)
                         try {
-                          await deleteUser(user.id)
+                          await deleteCategory(category.id)
                           toast({
-                            title: 'User deleted'
+                            title: 'category deleted'
                           })
-                          router.push('/users')
+                          router.push('/categorys')
                         } catch (err) {
                           toast({
-                            title: 'Error deleting user',
+                            title: 'Error deleting category',
                             variant: 'destructive'
                           })
                         }
@@ -164,8 +164,8 @@ export const Render: FC<{
                 </AlertDialogContent>
               </AlertDialog>
             ) : undefined}
-            {user ? (
-              <Link href="/users/new">
+            {category ? (
+              <Link href="/categorys/new">
                 <Button
                   type="button"
                   disabled={isSaving || isDeleting}
@@ -220,7 +220,7 @@ export const Render: FC<{
             )}
           />
 
-          {!user ? (
+          {!category ? (
             <FormField
               control={form.control}
               name="password"
@@ -245,20 +245,20 @@ export const Render: FC<{
           ) : null}
         </form>
       </Form>
-      {user ? (
+      {category ? (
         <SystemInfo
           items={[
             {
               label: 'Id',
-              value: user.id
+              value: category.id
             },
             {
               label: 'Created At',
-              value: formatDateTime(user.createdAt)
+              value: formatDateTime(category.createdAt)
             },
             {
               label: 'Updated At',
-              value: timesAgo(user.updatedAt)
+              value: timesAgo(category.updatedAt)
             }
           ]}
         />

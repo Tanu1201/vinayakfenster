@@ -43,14 +43,14 @@ export const UserAuthForm: FC = ({
   async function onSubmit(data: FormData) {
     setIsLoading(true)
 
-    const signInResult = await signIn('email', {
+    const signInResult = await signIn('credentials', {
       email: data.email.toLowerCase(),
-      redirect: false,
+      password: data.password,
+      redirect: true,
       callbackUrl: searchParams?.get('from') || '/dashboard'
     })
 
     setIsLoading(false)
-
     if (!signInResult?.ok) {
       return toast({
         title: 'Something went wrong.',
@@ -60,8 +60,7 @@ export const UserAuthForm: FC = ({
     }
 
     return toast({
-      title: 'Check your email',
-      description: 'We sent you a login link. Be sure to check your spam too.'
+      title: 'Signed In'
     })
   }
 

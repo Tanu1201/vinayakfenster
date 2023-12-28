@@ -4,6 +4,7 @@ import {
   ArrowUp,
   ArrowUpDown,
   Biohazard,
+  Boxes,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -79,5 +80,6 @@ export const Icons = {
   chevronsLeft: ChevronsLeft,
   chevronsRight: ChevronsRight,
   chevronRight: ChevronRight,
-  mixer: Settings2
+  mixer: Settings2,
+  categories: Boxes
 }
