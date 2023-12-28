@@ -7,12 +7,13 @@ const comic = Comic_Neue({ subsets: ['latin'], weight: '700' })
 
 export default function Home() {
   return (
-    <div className="gap-12 flex justify-center items-center flex-col bg-white text-black">
+    <div className="gap-12 flex h-screen justify-center items-center flex-col bg-white text-black">
       <h1 className={`text-5xl ${comic.className}`}>Vinayak Fenster</h1>
       <div className="grid grid-cols-2 gap-24 gap-y-8 mt-12">
         <Link
           href="https://www.facebook.com/vinayakfenster/"
           className="flex flex-col items-center"
+          target="_blank"
         >
           <BsFacebook size="48" />
           <p className="text-xl">Facebook</p>
@@ -31,13 +32,15 @@ export default function Home() {
         </Link> */}
         <Link
           href="https://maps.app.goo.gl/1h8T1tsUYqbGiyht9"
+          target="_blank"
           className="flex flex-col items-center"
         >
           <IoLocationOutline size="48" />
           <p className="text-xl">Location</p>
         </Link>
         <Link
-          href="https://instagram.com/vinayakfenster.com?igshid=OGQ5ZDc2ODk2ZA=="
+          href="https://instagram.com/vinayakfenster"
+          target="_blank"
           className="flex flex-col items-center col-span-2"
         >
           <BsInstagram size="48" />
