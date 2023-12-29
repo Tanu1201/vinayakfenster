@@ -4,7 +4,7 @@
   "description": "admin app",
   "private": true,
   "scripts": {
-    "postinstall": "prisma generate",
+    "postinstall": "prisma generate && prisma db push",
     "lint": "next lint",
     "dev": "next dev -p 3001",
     "build": "next build",
