@@ -34,10 +34,13 @@ import {
 import { Input } from '@/components/ui/input'
 import { toast } from '@/components/ui/use-toast'
 import { formatDateTime, timesAgo } from '@/lib/formatDate'
+import { Delete } from 'lucide-react'
+import Image from 'next/image'
 import {
   GetBrandFnDataType,
   createBrand,
   deleteBrand,
+  deleteBrandImage,
   updateBrand
 } from './actions'
 
@@ -61,17 +64,51 @@ export const Render: FC<{
   const router = useRouter()
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [file, setFile] = useState<File | undefined>(undefined)
+  const [image, setImage] = useState<{ id: string; url: string }>()
 
   async function onSubmit(data: FormData) {
     setIsSaving(true)
     try {
+      let uploadedFile:
+        | {
+            fileId: string
+            fileUrl: string
+          }
+        | undefined = undefined
+      if (file) {
+        const formData = new FormData()
+        formData.append('file', file)
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        })
+        const json = await res.json()
+        if (json.success && json.id && json.url) {
+          uploadedFile = {
+            fileId: json.id,
+            fileUrl: json.url
+          }
+        } else {
+          toast({
+            title: 'Error uploading file',
+            variant: 'destructive'
+          })
+          setIsSaving(false)
+          return
+        }
+      }
       if (!brand) {
-        const newId = await createBrand(data)
+        const newId = await createBrand({
+          ...data,
+          fileId: uploadedFile?.fileId
+        })
         router.replace(`/brands/${newId}`)
       } else {
         await updateBrand({
           id: brand.id,
-          ...data
+          ...data,
+          fileId: uploadedFile?.fileId
         })
       }
       toast({
@@ -173,6 +210,26 @@ export const Render: FC<{
             ) : undefined}
           </div>
 
+          {image?.url || brand?.resource?.url ? (
+            <div className="flex gap-4 md:col-span-2 my-8">
+              <Image
+                src={image?.url || brand?.resource?.url || ''}
+                height={300}
+                width={300}
+                alt=""
+              />
+
+              {brand ? (
+                <Delete
+                  className="cursor-pointer"
+                  onClick={async () => {
+                    await deleteBrandImage(brand.id)
+                  }}
+                />
+              ) : null}
+            </div>
+          ) : null}
+
           <FormField
             control={form.control}
             name="name"
@@ -212,6 +269,27 @@ export const Render: FC<{
                 <FormMessage />
               </FormItem>
             )}
+          />
+
+          <Input
+            type="file"
+            placeholder="Enter image"
+            max={1}
+            onChange={async e => {
+              if (e.target.files) {
+                const f = e.target?.files?.[0]
+                if (f) {
+                  setFile(f)
+                  const buffer = await f?.arrayBuffer()
+                  setImage({
+                    id: f.name,
+                    url: URL.createObjectURL(new Blob([buffer]))
+                  })
+                }
+              }
+            }}
+            autoCorrect="off"
+            disabled={isSaving}
           />
         </form>
       </Form>

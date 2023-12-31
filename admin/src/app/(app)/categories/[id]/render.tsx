@@ -34,10 +34,13 @@ import {
 import { Input } from '@/components/ui/input'
 import { toast } from '@/components/ui/use-toast'
 import { formatDateTime, timesAgo } from '@/lib/formatDate'
+import { Delete } from 'lucide-react'
+import Image from 'next/image'
 import {
   GetCategoryFnDataType,
   createCategory,
   deleteCategory,
+  deleteCategoryImage,
   updateCategory
 } from './actions'
 
@@ -61,17 +64,51 @@ export const Render: FC<{
   const router = useRouter()
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [file, setFile] = useState<File | undefined>(undefined)
+  const [image, setImage] = useState<{ id: string; url: string }>()
 
   async function onSubmit(data: FormData) {
     setIsSaving(true)
     try {
+      let uploadedFile:
+        | {
+            fileId: string
+            fileUrl: string
+          }
+        | undefined = undefined
+      if (file) {
+        const formData = new FormData()
+        formData.append('file', file)
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        })
+        const json = await res.json()
+        if (json.success && json.id && json.url) {
+          uploadedFile = {
+            fileId: json.id,
+            fileUrl: json.url
+          }
+        } else {
+          toast({
+            title: 'Error uploading file',
+            variant: 'destructive'
+          })
+          setIsSaving(false)
+          return
+        }
+      }
       if (!category) {
-        const newId = await createCategory(data)
+        const newId = await createCategory({
+          ...data,
+          fileId: uploadedFile?.fileId
+        })
         router.replace(`/categories/${newId}`)
       } else {
         await updateCategory({
           id: category.id,
-          ...data
+          ...data,
+          fileId: uploadedFile?.fileId
         })
       }
       toast({
@@ -109,6 +146,7 @@ export const Render: FC<{
               )}
               <span>Save</span>
             </Button>
+
             {category ? (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -175,6 +213,26 @@ export const Render: FC<{
             ) : undefined}
           </div>
 
+          {image?.url || category?.resource?.url ? (
+            <div className="flex gap-4 md:col-span-2 my-8">
+              <Image
+                src={image?.url || category?.resource?.url || ''}
+                height={300}
+                width={300}
+                alt=""
+              />
+
+              {category ? (
+                <Delete
+                  className="cursor-pointer"
+                  onClick={async () => {
+                    await deleteCategoryImage(category.id)
+                  }}
+                />
+              ) : null}
+            </div>
+          ) : null}
+
           <FormField
             control={form.control}
             name="name"
@@ -214,6 +272,27 @@ export const Render: FC<{
                 <FormMessage />
               </FormItem>
             )}
+          />
+
+          <Input
+            type="file"
+            placeholder="Enter image"
+            max={1}
+            onChange={async e => {
+              if (e.target.files) {
+                const f = e.target?.files?.[0]
+                if (f) {
+                  setFile(f)
+                  const buffer = await f?.arrayBuffer()
+                  setImage({
+                    id: f.name,
+                    url: URL.createObjectURL(new Blob([buffer]))
+                  })
+                }
+              }
+            }}
+            autoCorrect="off"
+            disabled={isSaving}
           />
         </form>
       </Form>

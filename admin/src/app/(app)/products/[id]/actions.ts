@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 
 import { getAuthSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { storageClient } from '@/lib/storageClient'
 import { UnwrapPromise } from '@/types/UnwrapPromise'
 
 export const getProduct = async (id: string) => {
@@ -18,7 +19,8 @@ export const getProduct = async (id: string) => {
       createdBy: true,
       updatedBy: true,
       brand: true,
-      category: true
+      category: true,
+      productImages: true
     }
   })
 }
@@ -30,13 +32,15 @@ export const createProduct = async ({
   slug,
   description,
   brandId,
-  categoryId
+  categoryId,
+  fileIds
 }: {
   name: string
   slug: string
   description: string
   brandId?: string
   categoryId?: string
+  fileIds?: string[]
 }) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
@@ -53,6 +57,18 @@ export const createProduct = async ({
     }
   })
 
+  if (fileIds?.length)
+    await prisma.resource.updateMany({
+      where: {
+        id: {
+          in: fileIds
+        }
+      },
+      data: {
+        productId: id
+      }
+    })
+
   revalidatePath('/products')
   revalidatePath(`/products/${id}`)
 
@@ -65,7 +81,8 @@ export const updateProduct = async ({
   slug,
   description,
   brandId,
-  categoryId
+  categoryId,
+  fileIds
 }: {
   id: string
   name: string
@@ -73,6 +90,7 @@ export const updateProduct = async ({
   description: string
   brandId?: string
   categoryId?: string
+  fileIds?: string[]
 }) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
@@ -91,6 +109,18 @@ export const updateProduct = async ({
     }
   })
 
+  if (fileIds?.length)
+    await prisma.resource.updateMany({
+      where: {
+        id: {
+          in: fileIds
+        }
+      },
+      data: {
+        productId: id
+      }
+    })
+
   revalidatePath('/products')
   revalidatePath(`/products/${id}`)
 }
@@ -107,4 +137,29 @@ export const deleteProduct = async (id: string) => {
 
   revalidatePath('/products')
   revalidatePath(`/products/${id}`)
+}
+
+export const deleteProductImage = async (productImageId: string) => {
+  const session = await getAuthSession()
+  if (!session) throw new Error('Unauthorized')
+  const productImage = await prisma.resource.findUnique({
+    where: {
+      id: productImageId
+    },
+    include: {
+      product: true
+    }
+  })
+  if (!productImage) throw new Error('Product image not found')
+  await Promise.all([
+    storageClient.deleteFile(productImage.newFilename),
+    prisma.resource.delete({
+      where: {
+        id: productImageId
+      }
+    })
+  ])
+
+  revalidatePath('/products')
+  revalidatePath(`/products/${productImageId}`)
 }

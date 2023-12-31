@@ -43,15 +43,17 @@ export const UserAuthForm: FC = ({
   async function onSubmit(data: FormData) {
     setIsLoading(true)
 
-    const signInResult = await signIn('credentials', {
-      email: data.email.toLowerCase(),
-      password: data.password,
-      redirect: true,
-      callbackUrl: searchParams?.get('from') || '/dashboard'
-    })
-
-    setIsLoading(false)
-    if (!signInResult?.ok) {
+    try {
+      await signIn('credentials', {
+        email: data.email.toLowerCase(),
+        password: data.password,
+        redirect: true,
+        callbackUrl: searchParams?.get('from') || '/dashboard'
+      })
+      return toast({
+        title: 'Signed In'
+      })
+    } catch (error) {
       return toast({
         title: 'Something went wrong.',
         description: 'Your sign in request failed. Please try again.',
@@ -59,9 +61,7 @@ export const UserAuthForm: FC = ({
       })
     }
 
-    return toast({
-      title: 'Signed In'
-    })
+    setIsLoading(false)
   }
 
   return (

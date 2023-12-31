@@ -9,6 +9,14 @@ const nextConfig = {
   i18n: {
     locales: ['en'],
     defaultLocale: 'en'
+  },
+  images: {
+    remotePatterns: [
+      {
+        hostname: 'storage.googleapis.com',
+        protocol: 'https'
+      }
+    ]
   }
 }
 

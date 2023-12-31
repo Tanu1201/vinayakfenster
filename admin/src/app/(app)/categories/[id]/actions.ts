@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 
 import { getAuthSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { storageClient } from '@/lib/storageClient'
 import { UnwrapPromise } from '@/types/UnwrapPromise'
 
 export const getCategory = async (id: string) => {
@@ -16,7 +17,8 @@ export const getCategory = async (id: string) => {
     },
     include: {
       createdBy: true,
-      updatedBy: true
+      updatedBy: true,
+      resource: true
     }
   })
 }
@@ -27,10 +29,12 @@ export type GetCategoryFnDataType = UnwrapPromise<
 
 export const createCategory = async ({
   name,
-  slug
+  slug,
+  fileId
 }: {
   name: string
   slug: string
+  fileId?: string
 }) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
@@ -40,7 +44,8 @@ export const createCategory = async ({
       name,
       slug,
       createdById: session.user.id,
-      updatedById: session.user.id
+      updatedById: session.user.id,
+      resourceId: fileId
     }
   })
 
@@ -53,11 +58,13 @@ export const createCategory = async ({
 export const updateCategory = async ({
   id,
   name,
-  slug
+  slug,
+  fileId
 }: {
   id: string
   name: string
   slug: string
+  fileId?: string
 }) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
@@ -69,7 +76,8 @@ export const updateCategory = async ({
     data: {
       name,
       slug,
-      updatedById: session.user.id
+      updatedById: session.user.id,
+      resourceId: fileId
     }
   })
 
@@ -86,6 +94,41 @@ export const deleteCategory = async (id: string) => {
       id
     }
   })
+
+  revalidatePath('/categories')
+  revalidatePath(`/categories/${id}`)
+}
+
+export const deleteCategoryImage = async (id: string) => {
+  const session = await getAuthSession()
+  if (!session) throw new Error('Unauthorized')
+  const category = await prisma.category.findUnique({
+    where: {
+      id
+    },
+    include: {
+      resource: true
+    }
+  })
+  if (!category) throw new Error('Category not found')
+  if (!category.resource) throw new Error('Category image not found')
+
+  await prisma.category.update({
+    where: {
+      id
+    },
+    data: {
+      resourceId: null
+    }
+  })
+  await Promise.all([
+    storageClient.deleteFile(category.resource.newFilename),
+    prisma.resource.delete({
+      where: {
+        id: category.resource.id
+      }
+    })
+  ])
 
   revalidatePath('/categories')
   revalidatePath(`/categories/${id}`)
