@@ -22,6 +22,7 @@ import {
   LogOut,
   LucideIcon,
   LucideProps,
+  MessageCircleQuestion,
   Moon,
   Plus,
   PlusCircle,
@@ -85,5 +86,6 @@ export const Icons = {
   mixer: Settings2,
   categories: Boxes,
   brands: Server,
-  products: ShoppingCart
+  products: ShoppingCart,
+  enquiry: MessageCircleQuestion
 }

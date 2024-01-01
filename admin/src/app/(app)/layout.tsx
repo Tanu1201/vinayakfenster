@@ -35,13 +35,30 @@ const Layout = async ({ children }: { children: ReactNode }) => {
               {
                 title: 'Brands',
                 href: '/brands'
+              },
+              {
+                title: 'Products',
+                href: '/products'
+              },
+              {
+                title: 'Enquiries',
+                href: '/enquiries'
+              },
+              {
+                title: 'Tasks',
+                href: '/tasks'
               }
             ]}
           />
           <div className="flex items-center justify-center space-x-4">
             <AppNavCommand
               modules={{
-                task: true
+                task: true,
+                brands: true,
+                categories: true,
+                products: true,
+                enquiries: true,
+                users: true
               }}
             />
             <UserAccountNav
@@ -83,6 +100,16 @@ const Layout = async ({ children }: { children: ReactNode }) => {
                 title: 'Products',
                 href: '/products',
                 icon: 'products'
+              },
+              {
+                title: 'Enquiries',
+                href: '/enquiries',
+                icon: 'enquiry'
+              },
+              {
+                title: 'Tasks',
+                href: '/tasks',
+                icon: 'task'
               },
               {
                 title: 'Settings',

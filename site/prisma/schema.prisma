@@ -1,0 +1,221 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  active        Boolean   @default(true)
+  password      String
+  image         String?
+  emailVerified DateTime? @db.Timestamptz()
+
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+  createdProducts     Product[]     @relation("productCreatedBy")
+  updatedProducts     Product[]     @relation("productUpdatedBy")
+  createdCategories   Category[]    @relation("categoryCreatedBy")
+  updatedCategories   Category[]    @relation("categoryUpdatedBy")
+  createdBrands       Brand[]       @relation("brandCreatedBy")
+  updatedBrands       Brand[]       @relation("brandUpdatedBy")
+  createdPortfolios   Portfolio[]   @relation("portfolioCreatedBy")
+  updatedPortfolios   Portfolio[]   @relation("portfolioUpdatedBy")
+  createdTestimonials Testimonial[] @relation("testimonialCreatedBy")
+  updatedTestimonials Testimonial[] @relation("testimonialUpdatedBy")
+  createdTasks        Task[]        @relation("createdTasks")
+  updatedTasks        Task[]        @relation("updatedTasks")
+
+  @@map("Users")
+}
+
+model Resource {
+  id               String @id @default(cuid())
+  originalFilename String
+  newFilename      String @unique
+  url              String @unique
+
+  createdAt   DateTime     @default(now()) @db.Timestamptz()
+  updatedAt   DateTime     @default(now()) @updatedAt @db.Timestamptz()
+  task        Task?        @relation("taskImages", fields: [taskId], references: [id])
+  taskId      String?
+  productId   String?
+  portfolioId String?
+  product     Product?     @relation("productImages", fields: [productId], references: [id])
+  portfolio   Portfolio?   @relation("portfolioImages", fields: [portfolioId], references: [id])
+  category    Category?
+  brand       Brand?
+  testimonial Testimonial?
+
+  @@map("Resources")
+}
+
+model Product {
+  id          String @id @default(uuid())
+  name        String
+  description String
+  slug        String
+
+  brandId    String?
+  categoryId String?
+
+  brand         Brand?     @relation(fields: [brandId], references: [id])
+  category      Category?  @relation(fields: [categoryId], references: [id])
+  productImages Resource[] @relation("productImages")
+
+  createdById String
+  updatedById String
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+  createdBy   User     @relation("productCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User     @relation("productUpdatedBy", fields: [updatedById], references: [id])
+
+  @@unique([slug])
+  @@map("Products")
+}
+
+model Category {
+  id   String @id @default(uuid())
+  name String
+  slug String
+
+  resourceId String? @unique
+
+  products Product[]
+  resource Resource? @relation(fields: [resourceId], references: [id])
+
+  createdById String
+  updatedById String
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+  createdBy   User     @relation("categoryCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User     @relation("categoryUpdatedBy", fields: [updatedById], references: [id])
+
+  @@unique([slug])
+  @@map("Categories")
+}
+
+model Brand {
+  id   String @id @default(uuid())
+  name String
+  slug String
+
+  resourceId String? @unique
+
+  products Product[]
+  resource Resource? @relation(fields: [resourceId], references: [id])
+
+  createdById String
+  updatedById String
+  createdAt   DateTime   @default(now()) @db.Timestamptz()
+  updatedAt   DateTime   @updatedAt @db.Timestamptz()
+  createdBy   User       @relation("brandCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User       @relation("brandUpdatedBy", fields: [updatedById], references: [id])
+  topBrands   TopBrand[]
+
+  @@unique([slug])
+  @@map("Brands")
+}
+
+model Portfolio {
+  id          String @id @default(uuid())
+  name        String
+  description String
+
+  portfolioImages Resource[] @relation("portfolioImages")
+
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+  createdById String
+  updatedById String
+  createdBy   User     @relation("portfolioCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User     @relation("portfolioUpdatedBy", fields: [updatedById], references: [id])
+
+  @@map("Portfolios")
+}
+
+model Testimonial {
+  id          String @id @default(uuid())
+  name        String
+  description String
+
+  resourceId String? @unique
+
+  resource Resource? @relation(fields: [resourceId], references: [id])
+
+  createdAt       DateTime         @default(now()) @db.Timestamptz()
+  updatedAt       DateTime         @updatedAt @db.Timestamptz()
+  createdById     String
+  updatedById     String
+  createdBy       User             @relation("testimonialCreatedBy", fields: [createdById], references: [id])
+  updatedBy       User             @relation("testimonialUpdatedBy", fields: [updatedById], references: [id])
+  topTestimonials TopTestimonial[]
+
+  @@map("Testimonials")
+}
+
+model Enquiry {
+  id          String  @id @default(uuid())
+  name        String
+  email       String
+  phone       String
+  companyName String?
+  message     String
+
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  updatedAt DateTime @updatedAt @db.Timestamptz()
+
+  @@map("Enquiries")
+}
+
+enum TaskStatus {
+  Backlog
+  Todo
+  In_Progress
+  Done
+  Cancelled
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  title       String
+  status      TaskStatus
+  description Json?
+
+  images Resource[] @relation("taskImages")
+
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
+  createdById String
+  createdBy   User     @relation("createdTasks", fields: [createdById], references: [id], onDelete: Cascade)
+  updatedById String
+  updatedBy   User     @relation("updatedTasks", fields: [updatedById], references: [id], onDelete: Cascade)
+
+  @@map("Tasks")
+}
+
+model TopBrand {
+  id       String @id @default(cuid())
+  brandId  String
+  position Int
+
+  brand Brand @relation(fields: [brandId], references: [id])
+
+  @@map("TopBrands")
+}
+
+model TopTestimonial {
+  id            String @id @default(cuid())
+  testimonialId String
+  position      Int
+
+  testimonial Testimonial @relation(fields: [testimonialId], references: [id])
+
+  @@map("TopTestimonials")
+}

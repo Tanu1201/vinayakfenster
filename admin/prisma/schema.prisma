@@ -113,10 +113,11 @@ model Brand {
 
     createdById String
     updatedById String
-    createdAt   DateTime @default(now()) @db.Timestamptz()
-    updatedAt   DateTime @updatedAt @db.Timestamptz()
-    createdBy   User     @relation("brandCreatedBy", fields: [createdById], references: [id])
-    updatedBy   User     @relation("brandUpdatedBy", fields: [updatedById], references: [id])
+    createdAt   DateTime   @default(now()) @db.Timestamptz()
+    updatedAt   DateTime   @updatedAt @db.Timestamptz()
+    createdBy   User       @relation("brandCreatedBy", fields: [createdById], references: [id])
+    updatedBy   User       @relation("brandUpdatedBy", fields: [updatedById], references: [id])
+    topBrands   TopBrand[]
 
     @@unique([slug])
     @@map("Brands")
@@ -148,22 +149,24 @@ model Testimonial {
 
     resource Resource? @relation(fields: [resourceId], references: [id])
 
-    createdAt   DateTime @default(now()) @db.Timestamptz()
-    updatedAt   DateTime @updatedAt @db.Timestamptz()
-    createdById String
-    updatedById String
-    createdBy   User     @relation("testimonialCreatedBy", fields: [createdById], references: [id])
-    updatedBy   User     @relation("testimonialUpdatedBy", fields: [updatedById], references: [id])
+    createdAt       DateTime         @default(now()) @db.Timestamptz()
+    updatedAt       DateTime         @updatedAt @db.Timestamptz()
+    createdById     String
+    updatedById     String
+    createdBy       User             @relation("testimonialCreatedBy", fields: [createdById], references: [id])
+    updatedBy       User             @relation("testimonialUpdatedBy", fields: [updatedById], references: [id])
+    topTestimonials TopTestimonial[]
 
     @@map("Testimonials")
 }
 
 model Enquiry {
-    id          String @id @default(uuid())
+    id          String  @id @default(uuid())
     name        String
     email       String
     phone       String
-    description String
+    companyName String?
+    message     String
 
     createdAt DateTime @default(now()) @db.Timestamptz()
     updatedAt DateTime @updatedAt @db.Timestamptz()
@@ -195,4 +198,24 @@ model Task {
     updatedBy   User     @relation("updatedTasks", fields: [updatedById], references: [id], onDelete: Cascade)
 
     @@map("Tasks")
+}
+
+model TopBrand {
+    id       String @id @default(cuid())
+    brandId  String
+    position Int
+
+    brand Brand @relation(fields: [brandId], references: [id])
+
+    @@map("TopBrands")
+}
+
+model TopTestimonial {
+    id            String @id @default(cuid())
+    testimonialId String
+    position      Int
+
+    testimonial Testimonial @relation(fields: [testimonialId], references: [id])
+
+    @@map("TopTestimonials")
 }
