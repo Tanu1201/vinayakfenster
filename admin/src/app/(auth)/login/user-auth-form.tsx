@@ -45,23 +45,23 @@ export const UserAuthForm: FC = ({
 
     try {
       await signIn('credentials', {
-        email: data.email.toLowerCase(),
+        username: data.email.toLowerCase(),
         password: data.password,
         redirect: true,
         callbackUrl: searchParams?.get('from') || '/dashboard'
       })
-      return toast({
+      toast({
         title: 'Signed In'
       })
     } catch (error) {
-      return toast({
+      toast({
         title: 'Something went wrong.',
         description: 'Your sign in request failed. Please try again.',
         variant: 'destructive'
       })
     }
 
-    setIsLoading(false)
+    return setIsLoading(false)
   }
 
   return (
