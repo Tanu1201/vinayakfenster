@@ -41,12 +41,15 @@ import {
 } from '@/components/ui/select'
 import { toast } from '@/components/ui/use-toast'
 import { formatDateTime, timesAgo } from '@/lib/formatDate'
+import { Delete } from 'lucide-react'
+import Image from 'next/image'
 import { GetBrandsFnDataType } from '../../brands/actions'
 import { GetCategoriesFnDataType } from '../../categories/actions'
 import {
   GetProductFnDataType,
   createProduct,
   deleteProduct,
+  deleteProductImage,
   updateProduct
 } from './actions'
 
@@ -78,19 +81,57 @@ export const Render: FC<{
   const router = useRouter()
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [files, setFiles] = useState<File[]>([])
+  const [images, setImages] = useState<{ id: string; url: string }[]>([])
 
   async function onSubmit(data: FormData) {
     setIsSaving(true)
     try {
+      let uploadedFiles:
+        | {
+            fileId: string
+            fileUrl: string
+          }[]
+        | undefined = []
+      if (files.length) {
+        for (const file of files) {
+          const formData = new FormData()
+          formData.append('file', file)
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData
+          })
+          const json = await res.json()
+          if (json.success && json.id && json.url) {
+            uploadedFiles.push({
+              fileId: json.id,
+              fileUrl: json.url
+            })
+          } else {
+            toast({
+              title: 'Error uploading file',
+              variant: 'destructive'
+            })
+            setIsSaving(false)
+            return
+          }
+        }
+      }
       if (!product) {
-        const newId = await createProduct(data)
+        const newId = await createProduct({
+          ...data,
+          fileIds: uploadedFiles?.map(f => f.fileId)
+        })
         router.replace(`/products/${newId}`)
       } else {
         await updateProduct({
           id: product.id,
-          ...data
+          ...data,
+          fileIds: uploadedFiles?.map(f => f.fileId)
         })
       }
+      setImages([])
+      setFiles([])
       toast({
         title: 'product saved'
       })
@@ -310,8 +351,68 @@ export const Render: FC<{
               </FormItem>
             )}
           />
+
+          <FormField
+            name={'images'}
+            render={() => (
+              <FormItem>
+                <FormLabel>Images</FormLabel>
+                <Input
+                  type="file"
+                  multiple
+                  placeholder="Enter images"
+                  onChange={async e => {
+                    if (e.target.files) {
+                      const f = e.target?.files
+                      if (f.length) {
+                        setFiles(Array.from(f))
+                        for (const file of f) {
+                          const buffer = await file?.arrayBuffer()
+                          setImages(prev => [
+                            ...prev,
+                            {
+                              id: file.name,
+                              url: URL.createObjectURL(new Blob([buffer]))
+                            }
+                          ])
+                        }
+                      }
+                    }
+                  }}
+                  autoCorrect="off"
+                  disabled={isSaving}
+                />
+              </FormItem>
+            )}
+          />
         </form>
       </Form>
+      <div className="grid grid-cols-3">
+        {images.map((image, i) => (
+          <div key={i} className="flex gap-2">
+            <Image src={image.url} height={300} width={300} alt="" />
+            <Delete
+              className="cursor-pointer"
+              onClick={async () => {
+                setImages(prev => prev.filter(p => p.id !== image.id))
+                setFiles(prev => prev.filter(p => p.name !== image.id))
+              }}
+            />
+          </div>
+        ))}
+
+        {product?.productImages.map((image, i) => (
+          <div key={i} className="flex gap-2">
+            <Image src={image.url} height={300} width={300} alt="" />
+            <Delete
+              className="cursor-pointer"
+              onClick={async () => {
+                await deleteProductImage(image.id)
+              }}
+            />
+          </div>
+        ))}
+      </div>
       {product ? (
         <SystemInfo
           items={[

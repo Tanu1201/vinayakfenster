@@ -1,6 +1,7 @@
 import { Button } from '@/components/UI/Button'
 import { NextPage } from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
 import { IoIosStarOutline } from 'react-icons/io'
 
 const Home: NextPage = () => {
@@ -70,7 +71,9 @@ const Home: NextPage = () => {
           </h1>
           <div>Join our community and experience the benefits today!</div>
           <div className="font-semibold mt-2">
-            <Button>Discover Brands</Button>
+            <Link href="/brands">
+              <Button>Discover Brands</Button>
+            </Link>
           </div>
         </div>
         <div className="w-full md:w-1/2 relative px-8 sm:px-16 xl:px-32">
@@ -159,7 +162,9 @@ const Home: NextPage = () => {
               Just 3 simple steps to enhance your space with our windows.
             </div>
             <div className="font-semibold">
-              <Button>Contact us</Button>
+              <Link href={'/contact'}>
+                <Button>Contact us</Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -240,7 +245,9 @@ const Home: NextPage = () => {
           </h1>
           <div>Discover the Difference Today</div>
           <div className="font-semibold mt-2">
-            <Button>Contact us</Button>
+            <Link href="/contact">
+              <Button>Contact us</Button>
+            </Link>
           </div>
         </div>
         <div className="w-full p-4 md:p-0 md:w-1/2 relative px-8 md:px-16 xl:px-32">

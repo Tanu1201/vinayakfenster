@@ -17,11 +17,13 @@ import {
   Github,
   Laptop,
   LayoutDashboard,
+  LineChart,
   Loader2,
   LogIn,
   LogOut,
   LucideIcon,
   LucideProps,
+  MessageCircleQuestion,
   Moon,
   Plus,
   PlusCircle,
@@ -30,13 +32,15 @@ import {
   Settings,
   Settings2,
   ShoppingCart,
+  Sparkles,
+  Star,
   Sun,
   Trash,
   User,
-  X
-} from 'lucide-react'
+  X,
+} from "lucide-react";
 
-export type Icon = LucideIcon
+export type Icon = LucideIcon;
 
 export const Icons = {
   logo: Biohazard,
@@ -85,5 +89,9 @@ export const Icons = {
   mixer: Settings2,
   categories: Boxes,
   brands: Server,
-  products: ShoppingCart
-}
+  products: ShoppingCart,
+  enquiry: MessageCircleQuestion,
+  topBrands: LineChart,
+  testimonial: Star,
+  topTestimonials: Sparkles,
+};

@@ -6,25 +6,16 @@ import { FC } from 'react'
 import { DataTable } from '@/components/data-table/data-table'
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
 import { Heading } from '@/components/heading'
-import { Icons } from '@/components/icons'
 import { Shell } from '@/components/shell'
-import { Button } from '@/components/ui/button'
 import { formatDateTime, timesAgo } from '@/lib/formatDate'
-import { GetProductsFnDataType } from './actions'
+import { GetEnquiriesFnDataType } from './actions'
 
 export const Render: FC<{
-  data: GetProductsFnDataType
+  data: GetEnquiriesFnDataType
 }> = ({ data }) => {
   return (
     <Shell>
-      <Heading heading="Products" text="List of all the products">
-        <Link href="/products/new">
-          <Button>
-            <Icons.add className="mr-2 h-4 w-4" />
-            New
-          </Button>
-        </Link>
-      </Heading>
+      <Heading heading="Enquiries" text="List of all the enquiries"></Heading>
       <DataTable
         columns={[
           {
@@ -35,38 +26,22 @@ export const Render: FC<{
             cell: ({ row }) => (
               <Link
                 className="underline underline-offset-4"
-                href={`/products/${row.original.id}`}
+                href={`/enquiries/${row.original.id}`}
               >
                 {row.original.name}
               </Link>
             )
           },
           {
-            accessorKey: 'brand',
+            accessorKey: 'phone',
             header: ({ column }) => (
-              <DataTableColumnHeader column={column} title="Brand" />
-            ),
-            cell: ({ row }) => (
-              <Link
-                className="underline underline-offset-4"
-                href={`/brands/${row.original.brand?.id}`}
-              >
-                {row.original.brand?.name}
-              </Link>
+              <DataTableColumnHeader column={column} title="Phone" />
             )
           },
           {
-            accessorKey: 'category',
+            accessorKey: 'email',
             header: ({ column }) => (
-              <DataTableColumnHeader column={column} title="Category" />
-            ),
-            cell: ({ row }) => (
-              <Link
-                className="underline underline-offset-4"
-                href={`/categories/${row.original.category?.id}`}
-              >
-                {row.original.category?.name}
-              </Link>
+              <DataTableColumnHeader column={column} title="Email" />
             )
           },
           {
@@ -84,7 +59,7 @@ export const Render: FC<{
             cell: ({ row }) => timesAgo(row.original.updatedAt)
           }
         ]}
-        data={data.products}
+        data={data.enquiries}
         total={data.total}
         searchableColumns={[
           {

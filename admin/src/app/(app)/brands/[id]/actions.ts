@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 
 import { getAuthSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { storageClient } from '@/lib/storageClient'
 import { UnwrapPromise } from '@/types/UnwrapPromise'
 
 export const getBrand = async (id: string) => {
@@ -16,7 +17,8 @@ export const getBrand = async (id: string) => {
     },
     include: {
       createdBy: true,
-      updatedBy: true
+      updatedBy: true,
+      resource: true
     }
   })
 }
@@ -25,10 +27,12 @@ export type GetBrandFnDataType = UnwrapPromise<ReturnType<typeof getBrand>>
 
 export const createBrand = async ({
   name,
-  slug
+  slug,
+  fileId
 }: {
   name: string
   slug: string
+  fileId?: string
 }) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
@@ -38,7 +42,8 @@ export const createBrand = async ({
       name,
       slug,
       createdById: session.user.id,
-      updatedById: session.user.id
+      updatedById: session.user.id,
+      resourceId: fileId
     }
   })
 
@@ -51,15 +56,37 @@ export const createBrand = async ({
 export const updateBrand = async ({
   id,
   name,
-  slug
+  slug,
+  fileId
 }: {
   id: string
   name: string
   slug: string
+  fileId?: string
 }) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
-
+  const brand = await prisma.brand.findUnique({
+    where: {
+      id
+    },
+    include: {
+      resource: true
+    }
+  })
+  if (!brand) throw new Error('Brand not found')
+  if (fileId) {
+    if (brand.resource) {
+      await Promise.all([
+        storageClient.deleteFile(brand.resource.newFilename),
+        prisma.resource.delete({
+          where: {
+            id: brand.resource.id
+          }
+        })
+      ])
+    }
+  }
   await prisma.brand.update({
     where: {
       id
@@ -67,7 +94,8 @@ export const updateBrand = async ({
     data: {
       name,
       slug,
-      updatedById: session.user.id
+      updatedById: session.user.id,
+      resourceId: fileId
     }
   })
 
@@ -84,6 +112,41 @@ export const deleteBrand = async (id: string) => {
       id
     }
   })
+
+  revalidatePath('/brands')
+  revalidatePath(`/brands/${id}`)
+}
+
+export const deleteBrandImage = async (id: string) => {
+  const session = await getAuthSession()
+  if (!session) throw new Error('Unauthorized')
+  const brand = await prisma.brand.findUnique({
+    where: {
+      id
+    },
+    include: {
+      resource: true
+    }
+  })
+  if (!brand) throw new Error('Brand not found')
+  if (!brand.resource) throw new Error('Brand image not found')
+
+  await prisma.brand.update({
+    where: {
+      id
+    },
+    data: {
+      resourceId: null
+    }
+  })
+  await Promise.all([
+    storageClient.deleteFile(brand.resource.newFilename),
+    prisma.resource.delete({
+      where: {
+        id: brand.resource.id
+      }
+    })
+  ])
 
   revalidatePath('/brands')
   revalidatePath(`/brands/${id}`)

@@ -1,16 +1,16 @@
-'use client'
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { FC, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { FC, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { Heading } from '@/components/heading'
-import { Icons } from '@/components/icons'
-import { Shell } from '@/components/shell'
-import { SystemInfo } from '@/components/system-info'
+import { Heading } from "@/components/heading";
+import { Icons } from "@/components/icons";
+import { Shell } from "@/components/shell";
+import { SystemInfo } from "@/components/system-info";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,113 +20,115 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { toast } from '@/components/ui/use-toast'
-import { formatDateTime, timesAgo } from '@/lib/formatDate'
-import { Delete } from 'lucide-react'
-import Image from 'next/image'
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
+import { formatDateTime, timesAgo } from "@/lib/formatDate";
+import { Delete } from "lucide-react";
+import Image from "next/image";
 import {
-  GetCategoryFnDataType,
-  createCategory,
-  deleteCategory,
-  deleteCategoryImage,
-  updateCategory
-} from './actions'
+  GetTestimonialFnDataType,
+  createTestimonial,
+  deleteTestimonial,
+  deleteTestimonialImage,
+  updateTestimonial,
+} from "./actions";
 
-const Categorieschema = z.object({
+const TestimonialSchema = z.object({
   name: z.string().min(1),
-  slug: z.string().min(1)
-})
+  description: z.string().min(1),
+});
 
-type FormData = z.infer<typeof Categorieschema>
+type FormData = z.infer<typeof TestimonialSchema>;
 
 export const Render: FC<{
-  category: GetCategoryFnDataType | undefined
-}> = ({ category }) => {
+  testimonial: GetTestimonialFnDataType | undefined;
+}> = ({ testimonial: testimonial }) => {
   const form = useForm<FormData>({
-    resolver: zodResolver(Categorieschema),
+    resolver: zodResolver(TestimonialSchema),
     defaultValues: {
-      name: category?.name ?? '',
-      slug: category?.slug ?? ''
-    }
-  })
-  const router = useRouter()
-  const [isSaving, setIsSaving] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [file, setFile] = useState<File | undefined>(undefined)
-  const [image, setImage] = useState<{ id: string; url: string }>()
+      name: testimonial?.name ?? "",
+      description: testimonial?.description ?? "",
+    },
+  });
+  const router = useRouter();
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [file, setFile] = useState<File | undefined>(undefined);
+  const [image, setImage] = useState<{ id: string; url: string }>();
 
   async function onSubmit(data: FormData) {
-    setIsSaving(true)
+    setIsSaving(true);
     try {
       let uploadedFile:
         | {
-            fileId: string
-            fileUrl: string
+            fileId: string;
+            fileUrl: string;
           }
-        | undefined = undefined
+        | undefined = undefined;
       if (file) {
-        const formData = new FormData()
-        formData.append('file', file)
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData
-        })
-        const json = await res.json()
+        const formData = new FormData();
+        formData.append("file", file);
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const json = await res.json();
         if (json.success && json.id && json.url) {
           uploadedFile = {
             fileId: json.id,
-            fileUrl: json.url
-          }
+            fileUrl: json.url,
+          };
         } else {
           toast({
-            title: 'Error uploading file',
-            variant: 'destructive'
-          })
-          setIsSaving(false)
-          return
+            title: "Error uploading file",
+            variant: "destructive",
+          });
+          setIsSaving(false);
+          return;
         }
       }
-      if (!category) {
-        const newId = await createCategory({
+      if (!testimonial) {
+        const newId = await createTestimonial({
           ...data,
-          fileId: uploadedFile?.fileId
-        })
-        router.replace(`/categories/${newId}`)
+          fileId: uploadedFile?.fileId,
+        });
+        router.replace(`/testimonials/${newId}`);
       } else {
-        await updateCategory({
-          id: category.id,
+        await updateTestimonial({
+          id: testimonial.id,
           ...data,
-          fileId: uploadedFile?.fileId
-        })
+          fileId: uploadedFile?.fileId,
+        });
       }
       toast({
-        title: 'category saved'
-      })
+        title: "testimonial saved",
+      });
     } catch (err) {
       toast({
-        title: 'Error saving category',
-        variant: 'destructive'
-      })
+        title: "Error saving testimonial",
+        variant: "destructive",
+      });
     }
-    setIsSaving(false)
+    setIsSaving(false);
   }
 
   return (
     <Shell>
       <Heading
-        heading={category ? category.name || category.id : 'New category'}
+        heading={
+          testimonial ? testimonial.name || testimonial.id : "New testimonial"
+        }
       />
       <Form {...form}>
         <form
@@ -146,8 +148,7 @@ export const Render: FC<{
               )}
               <span>Save</span>
             </Button>
-
-            {category ? (
+            {testimonial ? (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
@@ -176,20 +177,20 @@ export const Render: FC<{
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={async () => {
-                        setIsDeleting(true)
+                        setIsDeleting(true);
                         try {
-                          await deleteCategory(category.id)
+                          await deleteTestimonial(testimonial.id);
                           toast({
-                            title: 'category deleted'
-                          })
-                          router.push('/categories')
+                            title: "testimonial deleted",
+                          });
+                          router.push("/testimonials");
                         } catch (err) {
                           toast({
-                            title: 'Error deleting category',
-                            variant: 'destructive'
-                          })
+                            title: "Error deleting testimonial",
+                            variant: "destructive",
+                          });
                         }
-                        setIsDeleting(false)
+                        setIsDeleting(false);
                       }}
                     >
                       Continue
@@ -198,8 +199,8 @@ export const Render: FC<{
                 </AlertDialogContent>
               </AlertDialog>
             ) : undefined}
-            {category ? (
-              <Link href="/categories/new">
+            {testimonial ? (
+              <Link href="/testimonials/new">
                 <Button
                   type="button"
                   disabled={isSaving || isDeleting}
@@ -213,20 +214,20 @@ export const Render: FC<{
             ) : undefined}
           </div>
 
-          {image?.url || category?.resource?.url ? (
+          {image?.url || testimonial?.resource?.url ? (
             <div className="flex gap-4 md:col-span-2 my-8">
               <Image
-                src={image?.url || category?.resource?.url || ''}
+                src={image?.url || testimonial?.resource?.url || ""}
                 height={300}
                 width={300}
                 alt=""
               />
 
-              {category ? (
+              {testimonial ? (
                 <Delete
                   className="cursor-pointer"
                   onClick={async () => {
-                    await deleteCategoryImage(category.id)
+                    await deleteTestimonialImage(testimonial.id);
                   }}
                 />
               ) : null}
@@ -254,14 +255,14 @@ export const Render: FC<{
 
           <FormField
             control={form.control}
-            name="slug"
+            name="description"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Slug</FormLabel>
                 <FormControl>
                   <Input
                     type="text"
-                    placeholder="Enter slug"
+                    placeholder="Enter description"
                     autoCapitalize="none"
                     autoComplete="slug"
                     autoCorrect="off"
@@ -278,16 +279,16 @@ export const Render: FC<{
             type="file"
             placeholder="Enter image"
             max={1}
-            onChange={async e => {
+            onChange={async (e) => {
               if (e.target.files) {
-                const f = e.target?.files?.[0]
+                const f = e.target?.files?.[0];
                 if (f) {
-                  setFile(f)
-                  const buffer = await f?.arrayBuffer()
+                  setFile(f);
+                  const buffer = await f?.arrayBuffer();
                   setImage({
                     id: f.name,
-                    url: URL.createObjectURL(new Blob([buffer]))
-                  })
+                    url: URL.createObjectURL(new Blob([buffer])),
+                  });
                 }
               }
             }}
@@ -296,32 +297,32 @@ export const Render: FC<{
           />
         </form>
       </Form>
-      {category ? (
+      {testimonial ? (
         <SystemInfo
           items={[
             {
-              label: 'Id',
-              value: category.id
+              label: "Id",
+              value: testimonial.id,
             },
             {
-              label: 'Created At',
-              value: formatDateTime(category.createdAt)
+              label: "Created At",
+              value: formatDateTime(testimonial.createdAt),
             },
             {
-              label: 'Updated At',
-              value: timesAgo(category.updatedAt)
+              label: "Updated At",
+              value: timesAgo(testimonial.updatedAt),
             },
             {
-              label: 'Created By',
-              value: category.createdBy.name
+              label: "Created By",
+              value: testimonial.createdBy.name,
             },
             {
-              label: 'Updated By',
-              value: category.updatedBy.name
-            }
+              label: "Updated By",
+              value: testimonial.updatedBy.name,
+            },
           ]}
         />
       ) : undefined}
     </Shell>
-  )
-}
+  );
+};

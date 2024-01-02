@@ -41,10 +41,17 @@ model Resource {
     newFilename      String @unique
     url              String @unique
 
-    createdAt DateTime @default(now()) @db.Timestamptz()
-    updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
-    task      Task?    @relation("taskImages", fields: [taskId], references: [id])
-    taskId    String?
+    createdAt   DateTime     @default(now()) @db.Timestamptz()
+    updatedAt   DateTime     @default(now()) @updatedAt @db.Timestamptz()
+    task        Task?        @relation("taskImages", fields: [taskId], references: [id])
+    taskId      String?
+    productId   String?
+    portfolioId String?
+    product     Product?     @relation("productImages", fields: [productId], references: [id])
+    portfolio   Portfolio?   @relation("portfolioImages", fields: [portfolioId], references: [id])
+    category    Category?
+    brand       Brand?
+    testimonial Testimonial?
 
     @@map("Resources")
 }
@@ -53,13 +60,14 @@ model Product {
     id          String @id @default(uuid())
     name        String
     description String
-    slug        String
+    slug        String @unique
 
     brandId    String?
     categoryId String?
 
-    brand    Brand?    @relation(fields: [brandId], references: [id])
-    category Category? @relation(fields: [categoryId], references: [id])
+    brand         Brand?     @relation(fields: [brandId], references: [id])
+    category      Category?  @relation(fields: [categoryId], references: [id])
+    productImages Resource[] @relation("productImages")
 
     createdById String
     updatedById String
@@ -68,16 +76,19 @@ model Product {
     createdBy   User     @relation("productCreatedBy", fields: [createdById], references: [id])
     updatedBy   User     @relation("productUpdatedBy", fields: [updatedById], references: [id])
 
-    @@unique([slug])
     @@map("Products")
 }
 
 model Category {
-    id   String @id @default(uuid())
-    name String
-    slug String
+    id          String  @id @default(uuid())
+    name        String
+    slug        String  @unique
+    description String?
+
+    resourceId String? @unique
 
     products Product[]
+    resource Resource? @relation(fields: [resourceId], references: [id])
 
     createdById String
     updatedById String
@@ -86,16 +97,20 @@ model Category {
     createdBy   User     @relation("categoryCreatedBy", fields: [createdById], references: [id])
     updatedBy   User     @relation("categoryUpdatedBy", fields: [updatedById], references: [id])
 
-    @@unique([slug])
     @@map("Categories")
 }
 
 model Brand {
-    id   String @id @default(uuid())
-    name String
-    slug String
+    id          String  @id @default(uuid())
+    name        String
+    slug        String  @unique
+    description String?
+    isTopBrand  Boolean @default(false)
+
+    resourceId String? @unique
 
     products Product[]
+    resource Resource? @relation(fields: [resourceId], references: [id])
 
     createdById String
     updatedById String
@@ -104,7 +119,6 @@ model Brand {
     createdBy   User     @relation("brandCreatedBy", fields: [createdById], references: [id])
     updatedBy   User     @relation("brandUpdatedBy", fields: [updatedById], references: [id])
 
-    @@unique([slug])
     @@map("Brands")
 }
 
@@ -112,6 +126,8 @@ model Portfolio {
     id          String @id @default(uuid())
     name        String
     description String
+
+    portfolioImages Resource[] @relation("portfolioImages")
 
     createdAt   DateTime @default(now()) @db.Timestamptz()
     updatedAt   DateTime @updatedAt @db.Timestamptz()
@@ -124,9 +140,14 @@ model Portfolio {
 }
 
 model Testimonial {
-    id          String @id @default(uuid())
-    name        String
-    description String
+    id               String  @id @default(uuid())
+    name             String
+    description      String
+    isTopTestimonial Boolean @default(false)
+
+    resourceId String? @unique
+
+    resource Resource? @relation(fields: [resourceId], references: [id])
 
     createdAt   DateTime @default(now()) @db.Timestamptz()
     updatedAt   DateTime @updatedAt @db.Timestamptz()
@@ -139,11 +160,12 @@ model Testimonial {
 }
 
 model Enquiry {
-    id          String @id @default(uuid())
+    id          String  @id @default(uuid())
     name        String
     email       String
     phone       String
-    description String
+    companyName String?
+    message     String
 
     createdAt DateTime @default(now()) @db.Timestamptz()
     updatedAt DateTime @updatedAt @db.Timestamptz()

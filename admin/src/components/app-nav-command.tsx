@@ -22,6 +22,11 @@ import {
 
 export const AppNavCommand: FC<{
   modules: {
+    users: boolean
+    categories: boolean
+    brands: boolean
+    products: boolean
+    enquiries: boolean
     task: boolean
   }
 }> = ({ modules }) => {
@@ -99,6 +104,46 @@ export const AppNavCommand: FC<{
                 >
                   <Icons.task className="mr-2 h-4 w-4" />
                   Tasks
+                </CommandItem>
+              ) : undefined}
+              {modules.users ? (
+                <CommandItem
+                  onSelect={() => runCommand(() => router.push('/users'))}
+                >
+                  <Icons.user className="mr-2 h-4 w-4" />
+                  Users
+                </CommandItem>
+              ) : undefined}
+              {modules.categories ? (
+                <CommandItem
+                  onSelect={() => runCommand(() => router.push('/categories'))}
+                >
+                  <Icons.categories className="mr-2 h-4 w-4" />
+                  Categories
+                </CommandItem>
+              ) : undefined}
+              {modules.brands ? (
+                <CommandItem
+                  onSelect={() => runCommand(() => router.push('/brands'))}
+                >
+                  <Icons.brands className="mr-2 h-4 w-4" />
+                  Brands
+                </CommandItem>
+              ) : undefined}
+              {modules.products ? (
+                <CommandItem
+                  onSelect={() => runCommand(() => router.push('/products'))}
+                >
+                  <Icons.products className="mr-2 h-4 w-4" />
+                  Products
+                </CommandItem>
+              ) : undefined}
+              {modules.enquiries ? (
+                <CommandItem
+                  onSelect={() => runCommand(() => router.push('/enquries'))}
+                >
+                  <Icons.enquiry className="mr-2 h-4 w-4" />
+                  Enquiries
                 </CommandItem>
               ) : undefined}
             </CommandGroup>
