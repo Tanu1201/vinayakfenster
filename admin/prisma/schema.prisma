@@ -80,9 +80,10 @@ model Product {
 }
 
 model Category {
-    id   String @id @default(uuid())
-    name String
-    slug String @unique
+    id          String  @id @default(uuid())
+    name        String
+    slug        String  @unique
+    description String?
 
     resourceId String? @unique
 
@@ -100,10 +101,11 @@ model Category {
 }
 
 model Brand {
-    id         String  @id @default(uuid())
-    name       String
-    slug       String  @unique
-    isTopBrand Boolean @default(false)
+    id          String  @id @default(uuid())
+    name        String
+    slug        String  @unique
+    description String?
+    isTopBrand  Boolean @default(false)
 
     resourceId String? @unique
 

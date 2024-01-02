@@ -42,6 +42,34 @@ export const Render: FC<{
             )
           },
           {
+            accessorKey: 'brand',
+            header: ({ column }) => (
+              <DataTableColumnHeader column={column} title="Brand" />
+            ),
+            cell: ({ row }) => (
+              <Link
+                className="underline underline-offset-4"
+                href={`/brands/${row.original.brand?.id}`}
+              >
+                {row.original.brand?.name}
+              </Link>
+            )
+          },
+          {
+            accessorKey: 'category',
+            header: ({ column }) => (
+              <DataTableColumnHeader column={column} title="Category" />
+            ),
+            cell: ({ row }) => (
+              <Link
+                className="underline underline-offset-4"
+                href={`/categories/${row.original.category?.id}`}
+              >
+                {row.original.category?.name}
+              </Link>
+            )
+          },
+          {
             accessorKey: 'createdAt',
             header: ({ column }) => (
               <DataTableColumnHeader column={column} title="Created At" />

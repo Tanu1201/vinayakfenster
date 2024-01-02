@@ -1,7 +1,10 @@
 import { NextPage } from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
+import { getBrands } from './actions'
 
-const Brands: NextPage = () => {
+const Brands: NextPage = async () => {
+  const brands = await getBrands()
   return (
     <>
       <div className="relative w-full h-[50dvh]">
@@ -32,70 +35,25 @@ const Brands: NextPage = () => {
       </p>
 
       <div className="grid grid-cols-4  gap-32 mt-16 px-4 lg:px-32">
-        <div className="flex w-full h-32 relative">
-          <Image
-            src="/Brands/brand1.png"
-            alt=""
-            layout="fill"
-            objectFit="contain"
-          />
-        </div>
-        <div className="flex w-full h-32 relative">
-          <Image
-            src="/Brands/brand2.png"
-            alt=""
-            layout="fill"
-            objectFit="contain"
-          />
-        </div>
-        <div className="flex w-full h-32 relative">
-          <Image
-            src="/Brands/brand3.png"
-            alt=""
-            layout="fill"
-            objectFit="contain"
-          />
-        </div>
-        <div className="flex w-full h-32 relative">
-          <Image
-            src="/Brands/brand4.png"
-            layout="fill"
-            objectFit="contain"
-            alt=""
-          />
-        </div>
-        <div className="flex w-full h-32 relative">
-          <Image
-            src="/Brands/brand5.png"
-            alt=""
-            layout="fill"
-            objectFit="contain"
-          />
-        </div>
-        <div className="flex w-full h-32 relative">
-          <Image
-            src="/Brands/brand6.png"
-            alt=""
-            layout="fill"
-            objectFit="contain"
-          />
-        </div>
-        <div className="flex w-full h-32 relative">
-          <Image
-            src="/Brands/brand7.png"
-            alt=""
-            layout="fill"
-            objectFit="contain"
-          />
-        </div>
-        <div className="flex w-full h-32 relative">
-          <Image
-            src="/Brands/brand8.png"
-            alt=""
-            layout="fill"
-            objectFit="contain"
-          />
-        </div>
+        {brands.map(brand => (
+          <Link
+            href={`/brands/${brand.slug}`}
+            key={brand.id}
+            className="flex flex-col items-center gap-2"
+          >
+            <div className="flex w-full h-32 relative" key={brand.id}>
+              {brand.resource ? (
+                <Image
+                  src={brand.resource?.url}
+                  alt=""
+                  layout="fill"
+                  objectFit="contain"
+                />
+              ) : null}
+            </div>
+            <div>{brand.name}</div>
+          </Link>
+        ))}
       </div>
     </>
   )

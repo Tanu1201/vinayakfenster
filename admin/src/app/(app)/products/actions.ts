@@ -32,7 +32,19 @@ export const getProducts = async ({
         id: true,
         name: true,
         createdAt: true,
-        updatedAt: true
+        updatedAt: true,
+        brand: {
+          select: {
+            id: true,
+            name: true
+          }
+        },
+        category: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
       },
       skip: (page - 1) * limit,
       take: limit,
