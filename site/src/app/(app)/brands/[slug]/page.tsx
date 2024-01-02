@@ -18,8 +18,8 @@ const BrandPage = async ({
   const brand = await getBrand(params.slug)
   const products = await getBrandProducts({
     slug: params.slug,
-    page: 1,
-    limit: 10
+    page,
+    limit
   })
 
   if (!brand) {
