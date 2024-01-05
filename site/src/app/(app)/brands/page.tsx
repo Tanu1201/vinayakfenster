@@ -1,7 +1,12 @@
-import { NextPage } from 'next'
+import { siteConfig } from '@/lib/siteConfig'
+import { Metadata, NextPage } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getBrands } from './actions'
+
+export const generateMetadata = (): Metadata => ({
+  title: 'Brands' + ' | ' + siteConfig.name
+})
 
 const Brands: NextPage = async () => {
   const brands = await getBrands()

@@ -1,6 +1,11 @@
 import { Button } from '@/components/UI/Button'
-import { NextPage } from 'next'
+import { siteConfig } from '@/lib/siteConfig'
+import { Metadata, NextPage } from 'next'
 import Image from 'next/image'
+
+export const generateMetadata = (): Metadata => ({
+  title: 'About' + ' | ' + siteConfig.name
+})
 
 const About: NextPage = () => {
   return (

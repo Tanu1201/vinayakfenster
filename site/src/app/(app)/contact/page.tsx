@@ -1,9 +1,14 @@
-import { NextPage } from 'next'
+import { siteConfig } from '@/lib/siteConfig'
+import { Metadata, NextPage } from 'next'
 import Link from 'next/link'
 import { AiOutlineClockCircle } from 'react-icons/ai'
 import { IoLocationOutline, IoMailOutline } from 'react-icons/io5'
 import { MdOutlineLocalPhone } from 'react-icons/md'
 import { ContactForm } from './components/ContactForm'
+
+export const generateMetadata = (): Metadata => ({
+  title: 'Contact' + ' | ' + siteConfig.name
+})
 
 const Contact: NextPage = () => {
   return (

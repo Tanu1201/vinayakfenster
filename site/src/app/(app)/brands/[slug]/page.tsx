@@ -1,13 +1,12 @@
 import { siteConfig } from '@/lib/siteConfig'
-// import edjsHTML from 'editorjs-html'
 import { Metadata } from 'next/types'
 import { getBrand, getBrandProducts } from './actions'
 import { Render } from './render'
 
-// const edjsParser = edjsHTML()
-
-export const generateMetadata = async (): Promise<Metadata> => ({
-  title: siteConfig.name
+export const generateMetadata = (props: {
+  params: { slug: string }
+}): Metadata => ({
+  title: 'Brand - ' + props.params.slug + ' | ' + siteConfig.name
 })
 
 const BrandPage = async ({

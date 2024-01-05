@@ -19,8 +19,11 @@ import {
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { toast } from '@/components/ui/use-toast'
 import { formatDateTime, timesAgo } from '@/lib/formatDate'
+import Error from 'next/error'
 import { GetEnquiryFnDataType, deleteEnquiry } from './actions'
 
 export const Render: FC<{
@@ -29,7 +32,7 @@ export const Render: FC<{
   const router = useRouter()
   const [isDeleting, setIsDeleting] = useState(false)
 
-  return (
+  return enquiry ? (
     <Shell>
       <Heading heading={enquiry?.name || enquiry?.id || 'Error'} />
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -86,6 +89,65 @@ export const Render: FC<{
           ) : undefined}
         </div>
       </div>
+
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+        <div>
+          <label htmlFor="name" className="mb-2 block">
+            Name
+          </label>
+          <Input
+            name="name"
+            type="text"
+            className="disabled:opacity-100"
+            disabled
+            defaultValue={enquiry.name}
+          />
+        </div>
+        <div>
+          <label htmlFor="email" className="mb-2 block">
+            Email
+          </label>
+          <Input
+            name="email"
+            type="email"
+            className="disabled:opacity-100"
+            disabled
+            defaultValue={enquiry.email}
+          />
+        </div>
+        <div>
+          <label htmlFor="phone" className="mb-2 block"></label>
+          <Input
+            name="phone"
+            type="tel"
+            className="disabled:opacity-100"
+            disabled
+            defaultValue={enquiry.phone}
+          />
+        </div>
+        <div>
+          <label htmlFor="company" className="mb-2 block"></label>
+          <Input
+            name="company"
+            type="text"
+            className="disabled:opacity-100"
+            disabled
+            defaultValue={enquiry.companyName || ''}
+          />
+        </div>
+        <div className="col-span-2">
+          <label htmlFor="message" className="mb-2 block">
+            Message
+          </label>
+          <Textarea
+            name="message"
+            className="disabled:opacity-100"
+            disabled
+            defaultValue={enquiry.message}
+          />
+        </div>
+      </div>
+
       {enquiry ? (
         <SystemInfo
           items={[
@@ -105,5 +167,7 @@ export const Render: FC<{
         />
       ) : undefined}
     </Shell>
+  ) : (
+    <Error statusCode={404} withDarkMode={false} />
   )
 }
