@@ -1,6 +1,14 @@
-import Image from 'next/image'
-import Link from 'next/link'
+import { siteConfig } from '@/lib/siteConfig'
+// import edjsHTML from 'editorjs-html'
+import { Metadata } from 'next/types'
 import { getBrand, getBrandProducts } from './actions'
+import { Render } from './render'
+
+// const edjsParser = edjsHTML()
+
+export const generateMetadata = async (): Promise<Metadata> => ({
+  title: siteConfig.name
+})
 
 const BrandPage = async ({
   params,
@@ -22,31 +30,7 @@ const BrandPage = async ({
     limit
   })
 
-  if (!brand) {
-    return 'Brand not found!'
-  }
-
-  return (
-    <>
-      <h1>{brand.name}</h1>
-      <p>{brand.description}</p>
-      {products.map(product => (
-        <Link href={`/products/${product.slug}`} key={product.id}>
-          {product.productImages?.[0] ? (
-            <div>
-              <Image
-                src={product.productImages[0].url}
-                alt={product.name}
-                width={300}
-                height={300}
-              />
-            </div>
-          ) : null}
-          <p>{product.name}</p>
-        </Link>
-      ))}
-    </>
-  )
+  return <Render brand={brand} products={products} />
 }
 
 export default BrandPage

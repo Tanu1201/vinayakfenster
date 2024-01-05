@@ -59,7 +59,7 @@ model Resource {
 model Product {
     id          String @id @default(uuid())
     name        String
-    description String
+    description Json?
     slug        String @unique
 
     brandId    String?
@@ -80,10 +80,10 @@ model Product {
 }
 
 model Category {
-    id          String  @id @default(uuid())
+    id          String @id @default(uuid())
     name        String
-    slug        String  @unique
-    description String?
+    slug        String @unique
+    description Json?
 
     resourceId String? @unique
 
@@ -104,7 +104,7 @@ model Brand {
     id          String  @id @default(uuid())
     name        String
     slug        String  @unique
-    description String?
+    description Json?
     isTopBrand  Boolean @default(false)
 
     resourceId String? @unique
@@ -125,7 +125,7 @@ model Brand {
 model Portfolio {
     id          String @id @default(uuid())
     name        String
-    description String
+    description Json?
 
     portfolioImages Resource[] @relation("portfolioImages")
 
@@ -142,7 +142,8 @@ model Portfolio {
 model Testimonial {
     id               String  @id @default(uuid())
     name             String
-    description      String
+    description      Json?
+    starRating       Int     @default(0)
     isTopTestimonial Boolean @default(false)
 
     resourceId String? @unique

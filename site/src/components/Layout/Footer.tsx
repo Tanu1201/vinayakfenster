@@ -9,7 +9,9 @@ export const Footer: FC = () => {
           <Link href="/" className="text-xl font-semibold">
             <span>Vinayak</span>
           </Link>
-          <p className="mt-2">2023 © Vinayak Fenster Systems.</p>
+          <p className="mt-2">
+            {new Date().getFullYear()} © Vinayak Fenster Systems.
+          </p>
         </div>
         <ul className="md:w-1/4 flex flex-col gap-4">
           <li>

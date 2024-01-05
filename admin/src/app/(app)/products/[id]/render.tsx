@@ -1,9 +1,10 @@
 'use client'
 
+import EditorJS from '@editorjs/editorjs'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { FC, useState } from 'react'
+import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -56,7 +57,6 @@ import {
 const ProductSchema = z.object({
   name: z.string().min(1),
   slug: z.string().min(1),
-  description: z.string().min(1),
   brandId: z.string().optional(),
   categoryId: z.string().optional()
 })
@@ -73,7 +73,6 @@ export const Render: FC<{
     defaultValues: {
       name: product?.name ?? '',
       slug: product?.slug ?? '',
-      description: product?.description ?? '',
       brandId: product?.brand?.id ?? '',
       categoryId: product?.category?.id ?? ''
     }
@@ -84,7 +83,96 @@ export const Render: FC<{
   const [files, setFiles] = useState<File[]>([])
   const [images, setImages] = useState<{ id: string; url: string }[]>([])
 
+  const [isEditorMounted, setIsMounted] = useState<boolean>(false)
+
+  const editorRef = useRef<EditorJS>()
+  console.log(product?.description)
+  const initializeEditor = useCallback(async () => {
+    const EditorJS = (await import('@editorjs/editorjs')).default
+
+    // @ts-ignore
+    const Table = (await import('@editorjs/table')).default
+    // @ts-ignore
+    const List = (await import('@editorjs/list')).default
+    // @ts-ignore
+    const Image = (await import('@editorjs/image')).default
+    // @ts-ignore
+    const Header = (await import('@editorjs/header')).default
+    // @ts-ignore
+    const Quote = (await import('@editorjs/quote')).default
+    // @ts-ignore
+    const CheckList = (await import('@editorjs/checklist')).default
+    // @ts-ignore
+    const Delimiter = (await import('@editorjs/delimiter')).default
+
+    if (!editorRef.current) {
+      const editor = new EditorJS({
+        holder: 'editor',
+        onReady() {
+          editorRef.current = editor
+        },
+        placeholder: 'Type here to write...',
+        inlineToolbar: true,
+        data: product?.description as any,
+        tools: {
+          header: Header,
+          list: List,
+          image: {
+            class: Image,
+            config: {
+              uploader: {
+                async uploadByFile(file: any) {
+                  const formData = new FormData()
+                  formData.append('file', file)
+                  const res = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                  })
+                  const json = await res.json()
+                  if (json.success && json.id && json.url) {
+                    return {
+                      success: true,
+                      file: {
+                        id: json.id,
+                        url: json.url
+                      }
+                    }
+                  } else {
+                    return {
+                      success: false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          table: Table,
+          checklist: CheckList,
+          quote: Quote,
+          delimiter: Delimiter
+        }
+      })
+    }
+  }, [product?.description])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') setIsMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!isEditorMounted) return
+
+    initializeEditor()
+
+    return () => {
+      editorRef.current?.destroy()
+      editorRef.current = undefined
+    }
+  }, [isEditorMounted, initializeEditor])
+
   async function onSubmit(data: FormData) {
+    const editorData = await editorRef.current?.save()
+
     setIsSaving(true)
     try {
       let uploadedFiles:
@@ -120,6 +208,7 @@ export const Render: FC<{
       if (!product) {
         const newId = await createProduct({
           ...data,
+          description: editorData,
           fileIds: uploadedFiles?.map(f => f.fileId)
         })
         router.replace(`/products/${newId}`)
@@ -127,6 +216,7 @@ export const Render: FC<{
         await updateProduct({
           id: product.id,
           ...data,
+          description: editorData,
           fileIds: uploadedFiles?.map(f => f.fileId)
         })
       }
@@ -274,28 +364,6 @@ export const Render: FC<{
 
           <FormField
             control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Enter description"
-                    autoCapitalize="none"
-                    autoComplete="description"
-                    autoCorrect="off"
-                    disabled={isSaving}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
             name="brandId"
             render={({ field }) => (
               <FormItem>
@@ -385,34 +453,52 @@ export const Render: FC<{
               </FormItem>
             )}
           />
+
+          <div className="grid grid-cols-3 col-span-2">
+            {images.map((image, i) => (
+              <div key={i} className="flex gap-2">
+                <Image src={image.url} height={300} width={300} alt="" />
+                <Delete
+                  className="cursor-pointer"
+                  onClick={async () => {
+                    setImages(prev => prev.filter(p => p.id !== image.id))
+                    setFiles(prev => prev.filter(p => p.name !== image.id))
+                  }}
+                />
+              </div>
+            ))}
+
+            {product?.productImages.map((image, i) => (
+              <div key={i} className="flex gap-2">
+                <Image src={image.url} height={300} width={300} alt="" />
+                <Delete
+                  className="cursor-pointer"
+                  onClick={async () => {
+                    await deleteProductImage(image.id)
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+
+          {isEditorMounted ? (
+            <div className="col-span-1 items-center md:col-span-2 w-full mt-5 prose prose-neutral dark:prose-invert">
+              <h3 className="w-full bg-transparent text-3xl font-bold">
+                Description
+              </h3>
+              <div id="editor" className="min-h-[360px] w-full" />
+              <p className="text-sm text-gray-500">
+                Use{' '}
+                <kbd className="rounded-md border bg-muted px-1 text-xs uppercase">
+                  Tab
+                </kbd>{' '}
+                to open the command menu.
+              </p>
+            </div>
+          ) : undefined}
         </form>
       </Form>
-      <div className="grid grid-cols-3">
-        {images.map((image, i) => (
-          <div key={i} className="flex gap-2">
-            <Image src={image.url} height={300} width={300} alt="" />
-            <Delete
-              className="cursor-pointer"
-              onClick={async () => {
-                setImages(prev => prev.filter(p => p.id !== image.id))
-                setFiles(prev => prev.filter(p => p.name !== image.id))
-              }}
-            />
-          </div>
-        ))}
 
-        {product?.productImages.map((image, i) => (
-          <div key={i} className="flex gap-2">
-            <Image src={image.url} height={300} width={300} alt="" />
-            <Delete
-              className="cursor-pointer"
-              onClick={async () => {
-                await deleteProductImage(image.id)
-              }}
-            />
-          </div>
-        ))}
-      </div>
       {product ? (
         <SystemInfo
           items={[

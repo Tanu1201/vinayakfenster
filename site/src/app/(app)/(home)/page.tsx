@@ -1,10 +1,17 @@
 import { Button } from '@/components/UI/Button'
-import { NextPage } from 'next'
+import { siteConfig } from '@/lib/siteConfig'
+import { Metadata, NextPage } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { IoIosStarOutline } from 'react-icons/io'
+import { getTopBrands } from './actions'
 
-const Home: NextPage = () => {
+export const generateMetadata = async (): Promise<Metadata> => ({
+  title: 'Home' + ' | ' + siteConfig.name
+})
+
+const Home: NextPage = async () => {
+  const topBrands = await getTopBrands()
   return (
     <>
       <div className="flex px-4 lg:px-16 flex-col-reverse md:items-center gap-8 md:flex-row mt-8">
@@ -36,30 +43,25 @@ const Home: NextPage = () => {
           Trusted by individuals and teams at top companies worldwide
         </div>
 
-        <div className="grid grid-cols-2 items-center md:flex mt-8 justify-center gap-16">
-          {[
-            {
-              name: 'Brand 1'
-            },
-            {
-              name: 'Brand 2'
-            },
-            {
-              name: 'Brand 3'
-            },
-            {
-              name: 'Brand 4'
-            },
-            {
-              name: 'Brand 5'
-            }
-          ].map((brand, i) => (
-            <div
-              key={i}
-              className="flex font-semibold text-xl items-center justify-center"
+        <div className="grid grid-cols-2 px-8 sm:px-16 xl:px-32 items-center md:flex mt-8 justify-center gap-16">
+          {topBrands.map(brand => (
+            <Link
+              href={`/brands/${brand.slug}`}
+              key={brand.id}
+              className="flex flex-col items-center gap-2"
             >
-              {brand.name}
-            </div>
+              <div key={brand.id}>
+                {brand.resource ? (
+                  <Image
+                    src={brand.resource?.url}
+                    alt=""
+                    height={200}
+                    width={200}
+                  />
+                ) : null}
+              </div>
+              <div className="text-sm">{brand.name}</div>
+            </Link>
           ))}
         </div>
       </div>

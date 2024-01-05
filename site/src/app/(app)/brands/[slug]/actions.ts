@@ -1,6 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/db'
+import { UnwrapPromise } from '@/types/unwrapPromise'
 
 export const getBrand = async (slug: string) => {
   return await prisma.brand.findUnique({
@@ -21,6 +22,8 @@ export const getBrand = async (slug: string) => {
     }
   })
 }
+
+export type GetBrandFnDataType = UnwrapPromise<ReturnType<typeof getBrand>>
 
 export const getBrandProducts = async ({
   slug,
@@ -51,3 +54,7 @@ export const getBrandProducts = async ({
     }
   })
 }
+
+export type GetBrandProductsFnDataType = UnwrapPromise<
+  ReturnType<typeof getBrandProducts>
+>

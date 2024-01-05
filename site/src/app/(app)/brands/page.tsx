@@ -16,7 +16,7 @@ const Brands: NextPage = async () => {
           src="/Brands/hero.png"
           alt="Brands"
         />
-        <h1 className="text-white absolute text-5xl right-24 tracking-wide leading-normal text-right font-bold w-1/4 top-1/2 -translate-y-1/2">
+        <h1 className="text-white absolute text-3xl sm:text-5xl right-5 md:right-24 tracking-wide leading-normal text-right font-bold w-1/2 md:w-1/4 top-1/2 -translate-y-1/2">
           Discover Our Trusted Brands
         </h1>
       </div>
@@ -34,7 +34,7 @@ const Brands: NextPage = async () => {
         collaborations.
       </p>
 
-      <div className="grid grid-cols-4  gap-32 mt-16 px-4 lg:px-32">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8 sm:gap-32 mt-16 px-4 lg:px-32">
         {brands.map(brand => (
           <Link
             href={`/brands/${brand.slug}`}

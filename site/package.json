@@ -14,6 +14,8 @@
   "dependencies": {
     "@prisma/client": "^5.7.1",
     "@t3-oss/env-nextjs": "^0.7.1",
+    "@tailwindcss/typography": "^0.5.10",
+    "editorjs-html": "^3.4.3",
     "framer-motion": "^10.16.16",
     "next": "14.0.1",
     "react": "^18",
@@ -22,6 +24,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/eslint": "^8.56.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -29,7 +32,6 @@
     "@typescript-eslint/parser": "^6.15.0",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
-    "@types/eslint": "^8.56.0",
     "eslint-config-next": "14.0.1",
     "postcss": "^8",
     "prisma": "^5.7.1",
