@@ -73,8 +73,8 @@ export const Render: FC<{
     defaultValues: {
       name: product?.name ?? '',
       slug: product?.slug ?? '',
-      brandId: product?.brand?.id ?? '',
-      categoryId: product?.category?.id ?? ''
+      brandId: product?.brand?.id,
+      categoryId: product?.category?.id
     }
   })
   const router = useRouter()

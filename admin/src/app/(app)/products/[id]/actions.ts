@@ -94,7 +94,6 @@ export const updateProduct = async ({
 }) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
-
   await prisma.product.update({
     where: {
       id
