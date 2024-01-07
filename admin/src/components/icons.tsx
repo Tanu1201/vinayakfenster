@@ -15,6 +15,7 @@ import {
   Edit,
   EyeOff,
   Github,
+  Image,
   Laptop,
   LayoutDashboard,
   LineChart,
@@ -37,10 +38,10 @@ import {
   Sun,
   Trash,
   User,
-  X,
-} from "lucide-react";
+  X
+} from 'lucide-react'
 
-export type Icon = LucideIcon;
+export type Icon = LucideIcon
 
 export const Icons = {
   logo: Biohazard,
@@ -94,4 +95,5 @@ export const Icons = {
   topBrands: LineChart,
   testimonial: Star,
   topTestimonials: Sparkles,
-};
+  portfolio: Image
+}

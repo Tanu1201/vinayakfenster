@@ -7,50 +7,41 @@ import { prisma } from '@/lib/db'
 import { storageClient } from '@/lib/storageClient'
 import { UnwrapPromise } from '@/types/UnwrapPromise'
 
-export const getProduct = async (id: string) => {
+export const getPortfolio = async (id: string) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
 
-  return await prisma.product.findUnique({
+  return await prisma.portfolio.findUnique({
     where: {
       id
     },
     include: {
       createdBy: true,
       updatedBy: true,
-      brand: true,
-      category: true,
-      productImages: true
+      portfolioImages: true
     }
   })
 }
 
-export type GetProductFnDataType = UnwrapPromise<ReturnType<typeof getProduct>>
+export type GetPortfolioFnDataType = UnwrapPromise<
+  ReturnType<typeof getPortfolio>
+>
 
-export const createProduct = async ({
+export const createPortfolio = async ({
   name,
-  slug,
   description,
-  brandId,
-  categoryId,
   fileIds
 }: {
   name: string
-  slug: string
   description: any
-  brandId?: string
-  categoryId?: string
   fileIds?: string[]
 }) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
-  const { id } = await prisma.product.create({
+  const { id } = await prisma.portfolio.create({
     data: {
       name,
-      slug,
       description,
-      brandId,
-      categoryId,
       createdById: session.user.id,
       updatedById: session.user.id
     }
@@ -64,45 +55,36 @@ export const createProduct = async ({
         }
       },
       data: {
-        productId: id
+        portfolioId: id
       }
     })
 
-  revalidatePath('/products')
-  revalidatePath(`/products/${id}`)
+  revalidatePath('/portfolios')
+  revalidatePath(`/portfolios/${id}`)
 
   return id
 }
 
-export const updateProduct = async ({
+export const updatePortfolio = async ({
   id,
   name,
-  slug,
   description,
-  brandId,
-  categoryId,
   fileIds
 }: {
   id: string
   name: string
-  slug: string
   description: any
-  brandId?: string
-  categoryId?: string
   fileIds?: string[]
 }) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
-  await prisma.product.update({
+  await prisma.portfolio.update({
     where: {
       id
     },
     data: {
       name,
-      slug,
       description,
-      brandId,
-      categoryId,
       updatedById: session.user.id
     }
   })
@@ -115,55 +97,55 @@ export const updateProduct = async ({
         }
       },
       data: {
-        productId: id
+        portfolioId: id
       }
     })
 
-  revalidatePath('/products')
-  revalidatePath(`/products/${id}`)
+  revalidatePath('/portfolios')
+  revalidatePath(`/portfolios/${id}`)
 }
 
-export const deleteProduct = async (id: string) => {
+export const deletePortfolio = async (id: string) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
 
   await prisma.resource.deleteMany({
     where: {
-      productId: id
+      portfolioId: id
     }
   })
 
-  await prisma.product.delete({
+  await prisma.portfolio.delete({
     where: {
       id
     }
   })
 
-  revalidatePath('/products')
-  revalidatePath(`/products/${id}`)
+  revalidatePath('/portfolios')
+  revalidatePath(`/portfolios/${id}`)
 }
 
-export const deleteProductImage = async (productImageId: string) => {
+export const deletePortfolioImage = async (portfolioImageId: string) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
-  const productImage = await prisma.resource.findUnique({
+  const portfolioImage = await prisma.resource.findUnique({
     where: {
-      id: productImageId
+      id: portfolioImageId
     },
     include: {
       product: true
     }
   })
-  if (!productImage) throw new Error('Product image not found')
+  if (!portfolioImage) throw new Error('Product image not found')
   await Promise.all([
-    storageClient.deleteFile(productImage.newFilename),
+    storageClient.deleteFile(portfolioImage.newFilename),
     prisma.resource.delete({
       where: {
-        id: productImageId
+        id: portfolioImageId
       }
     })
   ])
 
-  revalidatePath('/products')
-  revalidatePath(`/products/${productImageId}`)
+  revalidatePath('/portfolios')
+  revalidatePath(`/portfolios/${portfolioImageId}`)
 }

@@ -125,7 +125,7 @@ model Brand {
 model Portfolio {
     id          String @id @default(uuid())
     name        String
-    description Json?
+    description String
 
     portfolioImages Resource[] @relation("portfolioImages")
 
@@ -142,7 +142,7 @@ model Portfolio {
 model Testimonial {
     id               String  @id @default(uuid())
     name             String
-    description      Json?
+    description      String
     starRating       Int     @default(0)
     isTopTestimonial Boolean @default(false)
 

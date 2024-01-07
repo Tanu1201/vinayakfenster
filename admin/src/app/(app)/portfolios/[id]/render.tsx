@@ -1,10 +1,9 @@
 'use client'
 
-import EditorJS from '@editorjs/editorjs'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { FC, useCallback, useEffect, useRef, useState } from 'react'
+import { FC, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -33,48 +32,34 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 import { toast } from '@/components/ui/use-toast'
 import { formatDateTime, timesAgo } from '@/lib/formatDate'
 import { Delete } from 'lucide-react'
 import Image from 'next/image'
-import { GetBrandsFnDataType } from '../../brands/actions'
-import { GetCategoriesFnDataType } from '../../categories/actions'
 import {
-  GetProductFnDataType,
-  createProduct,
-  deleteProduct,
-  deleteProductImage,
-  updateProduct
+  GetPortfolioFnDataType,
+  createPortfolio,
+  deletePortfolio,
+  deletePortfolioImage,
+  updatePortfolio
 } from './actions'
 
-const ProductSchema = z.object({
+const PortfolioSchema = z.object({
   name: z.string().min(1),
-  slug: z.string().min(1),
-  brandId: z.string().optional(),
-  categoryId: z.string().optional()
+  description: z.string().min(1)
 })
 
-type FormData = z.infer<typeof ProductSchema>
+type FormData = z.infer<typeof PortfolioSchema>
 
 export const Render: FC<{
-  product: GetProductFnDataType | undefined
-  brands: GetBrandsFnDataType['brands'] | undefined
-  categories: GetCategoriesFnDataType['categories'] | undefined
-}> = ({ product, brands, categories }) => {
+  portfolio: GetPortfolioFnDataType | undefined
+}> = ({ portfolio: portfolio }) => {
   const form = useForm<FormData>({
-    resolver: zodResolver(ProductSchema),
+    resolver: zodResolver(PortfolioSchema),
     defaultValues: {
-      name: product?.name ?? '',
-      slug: product?.slug ?? '',
-      brandId: product?.brand?.id,
-      categoryId: product?.category?.id
+      name: portfolio?.name ?? '',
+      description: portfolio?.description ?? ''
     }
   })
   const router = useRouter()
@@ -83,95 +68,7 @@ export const Render: FC<{
   const [files, setFiles] = useState<File[]>([])
   const [images, setImages] = useState<{ id: string; url: string }[]>([])
 
-  const [isEditorMounted, setIsMounted] = useState<boolean>(false)
-
-  const editorRef = useRef<EditorJS>()
-  const initializeEditor = useCallback(async () => {
-    const EditorJS = (await import('@editorjs/editorjs')).default
-
-    // @ts-ignore
-    const Table = (await import('@editorjs/table')).default
-    // @ts-ignore
-    const List = (await import('@editorjs/list')).default
-    // @ts-ignore
-    const Image = (await import('@editorjs/image')).default
-    // @ts-ignore
-    const Header = (await import('@editorjs/header')).default
-    // @ts-ignore
-    const Quote = (await import('@editorjs/quote')).default
-    // @ts-ignore
-    const CheckList = (await import('@editorjs/checklist')).default
-    // @ts-ignore
-    const Delimiter = (await import('@editorjs/delimiter')).default
-
-    if (!editorRef.current) {
-      const editor = new EditorJS({
-        holder: 'editor',
-        onReady() {
-          editorRef.current = editor
-        },
-        placeholder: 'Type here to write...',
-        inlineToolbar: true,
-        data: product?.description as any,
-        tools: {
-          header: Header,
-          list: List,
-          image: {
-            class: Image,
-            config: {
-              uploader: {
-                async uploadByFile(file: any) {
-                  const formData = new FormData()
-                  formData.append('file', file)
-                  const res = await fetch('/api/upload', {
-                    method: 'POST',
-                    body: formData
-                  })
-                  const json = await res.json()
-                  if (json.success && json.id && json.url) {
-                    return {
-                      success: true,
-                      file: {
-                        id: json.id,
-                        url: json.url
-                      }
-                    }
-                  } else {
-                    return {
-                      success: false
-                    }
-                  }
-                }
-              }
-            }
-          },
-          table: Table,
-          checklist: CheckList,
-          quote: Quote,
-          delimiter: Delimiter
-        }
-      })
-    }
-  }, [product?.description])
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') setIsMounted(true)
-  }, [])
-
-  useEffect(() => {
-    if (!isEditorMounted) return
-
-    initializeEditor()
-
-    return () => {
-      editorRef.current?.destroy()
-      editorRef.current = undefined
-    }
-  }, [isEditorMounted, initializeEditor])
-
   async function onSubmit(data: FormData) {
-    const editorData = await editorRef.current?.save()
-
     setIsSaving(true)
     try {
       let uploadedFiles:
@@ -204,29 +101,27 @@ export const Render: FC<{
           }
         }
       }
-      if (!product) {
-        const newId = await createProduct({
+      if (!portfolio) {
+        const newId = await createPortfolio({
           ...data,
-          description: editorData,
           fileIds: uploadedFiles?.map(f => f.fileId)
         })
-        router.replace(`/products/${newId}`)
+        router.replace(`/portfolios/${newId}`)
       } else {
-        await updateProduct({
-          id: product.id,
+        await updatePortfolio({
+          id: portfolio.id,
           ...data,
-          description: editorData,
           fileIds: uploadedFiles?.map(f => f.fileId)
         })
       }
       setImages([])
       setFiles([])
       toast({
-        title: 'product saved'
+        title: 'portfolio saved'
       })
     } catch (err) {
       toast({
-        title: 'Error saving product',
+        title: 'Error saving portfolio',
         variant: 'destructive'
       })
     }
@@ -235,7 +130,9 @@ export const Render: FC<{
 
   return (
     <Shell>
-      <Heading heading={product ? product.name || product.id : 'New product'} />
+      <Heading
+        heading={portfolio ? portfolio.name || portfolio.id : 'New portfolio'}
+      />
       <Form {...form}>
         <form
           className="grid grid-cols-1 gap-3 md:grid-cols-2"
@@ -254,7 +151,7 @@ export const Render: FC<{
               )}
               <span>Save</span>
             </Button>
-            {product ? (
+            {portfolio ? (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
@@ -285,14 +182,14 @@ export const Render: FC<{
                       onClick={async () => {
                         setIsDeleting(true)
                         try {
-                          await deleteProduct(product.id)
+                          await deletePortfolio(portfolio.id)
                           toast({
-                            title: 'product deleted'
+                            title: 'portfolio deleted'
                           })
-                          router.push('/products')
+                          router.push('/portfolios')
                         } catch (err) {
                           toast({
-                            title: 'Error deleting product',
+                            title: 'Error deleting portfolio',
                             variant: 'destructive'
                           })
                         }
@@ -305,8 +202,8 @@ export const Render: FC<{
                 </AlertDialogContent>
               </AlertDialog>
             ) : undefined}
-            {product ? (
-              <Link href="/products/new">
+            {portfolio ? (
+              <Link href="/portfolios/new">
                 <Button
                   type="button"
                   disabled={isSaving || isDeleting}
@@ -341,79 +238,20 @@ export const Render: FC<{
 
           <FormField
             control={form.control}
-            name="slug"
+            name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Slug</FormLabel>
+                <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Enter slug"
+                  <Textarea
+                    placeholder="Enter description"
                     autoCapitalize="none"
-                    autoComplete="slug"
+                    autoComplete="description"
                     autoCorrect="off"
                     disabled={isSaving}
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="brandId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Brand</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={isSaving}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select brand" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {brands?.map(({ id, name }) => (
-                      <SelectItem key={id} value={id}>
-                        {name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="categoryId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Category</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={isSaving}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {categories?.map(({ id, name }) => (
-                      <SelectItem key={id} value={id}>
-                        {name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
                 <FormMessage />
               </FormItem>
             )}
@@ -467,59 +305,42 @@ export const Render: FC<{
               </div>
             ))}
 
-            {product?.productImages.map((image, i) => (
+            {portfolio?.portfolioImages.map((image, i) => (
               <div key={i} className="flex gap-2">
                 <Image src={image.url} height={300} width={300} alt="" />
                 <Delete
                   className="cursor-pointer"
                   onClick={async () => {
-                    await deleteProductImage(image.id)
+                    await deletePortfolioImage(image.id)
                   }}
                 />
               </div>
             ))}
           </div>
-
-          {isEditorMounted ? (
-            <div className="col-span-1 items-center md:col-span-2 w-full mt-5 prose prose-neutral dark:prose-invert">
-              <h3 className="w-full bg-transparent text-3xl font-bold">
-                Description
-              </h3>
-              <div id="editor" className="min-h-[360px] w-full" />
-              <p className="text-sm text-gray-500">
-                Use{' '}
-                <kbd className="rounded-md border bg-muted px-1 text-xs uppercase">
-                  Tab
-                </kbd>{' '}
-                to open the command menu.
-              </p>
-            </div>
-          ) : undefined}
         </form>
       </Form>
-
-      {product ? (
+      {portfolio ? (
         <SystemInfo
           items={[
             {
               label: 'Id',
-              value: product.id
+              value: portfolio.id
             },
             {
               label: 'Created At',
-              value: formatDateTime(product.createdAt)
+              value: formatDateTime(portfolio.createdAt)
             },
             {
               label: 'Updated At',
-              value: timesAgo(product.updatedAt)
+              value: timesAgo(portfolio.updatedAt)
             },
             {
               label: 'Created By',
-              value: product.createdBy.name
+              value: portfolio.createdBy.name
             },
             {
               label: 'Updated By',
-              value: product.updatedBy.name
+              value: portfolio.updatedBy.name
             }
           ]}
         />

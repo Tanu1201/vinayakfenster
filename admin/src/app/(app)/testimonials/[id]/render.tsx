@@ -32,6 +32,7 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { toast } from '@/components/ui/use-toast'
 import { formatDateTime, timesAgo } from '@/lib/formatDate'
 import { Delete } from 'lucide-react'
@@ -257,13 +258,12 @@ export const Render: FC<{
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Slug</FormLabel>
+                <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Input
-                    type="text"
+                  <Textarea
                     placeholder="Enter description"
                     autoCapitalize="none"
-                    autoComplete="slug"
+                    autoComplete="description"
                     autoCorrect="off"
                     disabled={isSaving}
                     {...field}

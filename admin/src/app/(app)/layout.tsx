@@ -1,17 +1,17 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react'
 
-import { AppNavCommand } from "@/components/app-nav-command";
-import { MainNav } from "@/components/main-nav";
-import { SideNav } from "@/components/side-nav";
-import { SiteFooter } from "@/components/site-footer";
-import { UserAccountNav } from "@/components/user-account-nav";
-import { getAuthSession } from "@/lib/auth";
-import { notFound } from "next/navigation";
+import { AppNavCommand } from '@/components/app-nav-command'
+import { MainNav } from '@/components/main-nav'
+import { SideNav } from '@/components/side-nav'
+import { SiteFooter } from '@/components/site-footer'
+import { UserAccountNav } from '@/components/user-account-nav'
+import { getAuthSession } from '@/lib/auth'
+import { notFound } from 'next/navigation'
 
 const Layout = async ({ children }: { children: ReactNode }) => {
-  const session = await getAuthSession();
+  const session = await getAuthSession()
 
-  if (!session?.user) return notFound();
+  if (!session?.user) return notFound()
 
   return (
     <div className="flex min-h-screen flex-col space-y-6">
@@ -21,33 +21,33 @@ const Layout = async ({ children }: { children: ReactNode }) => {
             logoLink="/dashboard"
             items={[
               {
-                title: "Dashboard",
-                href: "/dashboard",
+                title: 'Dashboard',
+                href: '/dashboard'
               },
               {
-                title: "Users",
-                href: "/users",
+                title: 'Users',
+                href: '/users'
               },
               {
-                title: "Categories",
-                href: "/categories",
+                title: 'Categories',
+                href: '/categories'
               },
               {
-                title: "Brands",
-                href: "/brands",
+                title: 'Brands',
+                href: '/brands'
               },
               {
-                title: "Products",
-                href: "/products",
+                title: 'Products',
+                href: '/products'
               },
               {
-                title: "Enquiries",
-                href: "/enquiries",
+                title: 'Enquiries',
+                href: '/enquiries'
               },
               {
-                title: "Tasks",
-                href: "/tasks",
-              },
+                title: 'Tasks',
+                href: '/tasks'
+              }
             ]}
           />
           <div className="flex items-center justify-center space-x-4">
@@ -58,14 +58,14 @@ const Layout = async ({ children }: { children: ReactNode }) => {
                 categories: true,
                 products: true,
                 enquiries: true,
-                users: true,
+                users: true
               }}
             />
             <UserAccountNav
               user={{
                 name: session.user.name,
                 email: session.user.email,
-                image: session.user.image,
+                image: session.user.image
               }}
             />
           </div>
@@ -76,61 +76,66 @@ const Layout = async ({ children }: { children: ReactNode }) => {
           <SideNav
             items={[
               {
-                title: "Dashboard",
-                href: "/dashboard",
-                icon: "dashboard",
+                title: 'Dashboard',
+                href: '/dashboard',
+                icon: 'dashboard'
               },
 
               {
-                title: "Users",
-                href: "/users",
-                icon: "user",
+                title: 'Users',
+                href: '/users',
+                icon: 'user'
               },
               {
-                title: "Categories",
-                href: "/categories",
-                icon: "categories",
+                title: 'Categories',
+                href: '/categories',
+                icon: 'categories'
               },
               {
-                title: "Brands",
-                href: "/brands",
-                icon: "brands",
+                title: 'Brands',
+                href: '/brands',
+                icon: 'brands'
               },
               {
-                title: "Top Brands",
-                href: "/topBrands",
-                icon: "topBrands",
+                title: 'Top Brands',
+                href: '/topBrands',
+                icon: 'topBrands'
               },
               {
-                title: "Products",
-                href: "/products",
-                icon: "products",
+                title: 'Products',
+                href: '/products',
+                icon: 'products'
               },
               {
-                title: "Enquiries",
-                href: "/enquiries",
-                icon: "enquiry",
+                title: 'Enquiries',
+                href: '/enquiries',
+                icon: 'enquiry'
               },
               {
-                title: "Testimonials",
-                href: "/testimonials",
-                icon: "testimonial",
+                title: 'Testimonials',
+                href: '/testimonials',
+                icon: 'testimonial'
               },
               {
-                title: "Top Testimonials",
-                href: "/topTestimonials",
-                icon: "topTestimonials",
+                title: 'Top Testimonials',
+                href: '/topTestimonials',
+                icon: 'topTestimonials'
               },
               {
-                title: "Tasks",
-                href: "/tasks",
-                icon: "task",
+                title: 'Portfolios',
+                href: '/portfolios',
+                icon: 'portfolio'
               },
               {
-                title: "Settings",
-                href: "/settings",
-                icon: "settings",
+                title: 'Tasks',
+                href: '/tasks',
+                icon: 'task'
               },
+              {
+                title: 'Settings',
+                href: '/settings',
+                icon: 'settings'
+              }
             ]}
           />
         </aside>
@@ -140,7 +145,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
       </div>
       <SiteFooter className="border-t" />
     </div>
-  );
-};
+  )
+}
 
-export default Layout;
+export default Layout
