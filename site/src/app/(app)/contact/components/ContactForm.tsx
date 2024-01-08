@@ -10,7 +10,7 @@ export const ContactForm = () => {
 
   return (
     <form
-      className="grid grid-cols-1 gap-8 md:grid-cols-2"
+      className="grid grid-cols-1 gap-8 md:grid-cols-2 w-full"
       onSubmit={async e => {
         setIsSubmitting(true)
         e.preventDefault()
@@ -72,7 +72,7 @@ export const ContactForm = () => {
         placeholder="Message"
         required
         name="message"
-        className="col-span-2 shadow-md outline-none rounded-md border p-2"
+        className="md:col-span-2 shadow-md outline-none rounded-md border p-2"
       />
 
       <div>
