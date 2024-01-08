@@ -1,16 +1,22 @@
 'use client'
 
 import { Button } from '@/components/UI/Button'
+import { Modal } from '@/components/UI/Modal'
 import Image from 'next/image'
-import { FC } from 'react'
+import { FC, useState } from 'react'
+import 'swiper/css'
+import 'swiper/css/navigation'
+import { Navigation } from 'swiper/modules'
+import { Swiper, SwiperSlide } from 'swiper/react'
 import { GetPortfolioFnDatatype } from './action'
 
 export const Render: FC<{ portfolios: GetPortfolioFnDatatype }> = ({
   portfolios
 }) => {
-  // const [selectedPortflio, setSelectedPortfolio] = useState<
-  // GetPortfolioFnDatatype[0] | null
-  // >(null)
+  const [selectedPortflio, setSelectedPortfolio] = useState<
+    GetPortfolioFnDatatype[0] | null
+  >(null)
+  const [modalOpen, setModalOpen] = useState(false)
 
   return (
     <>
@@ -56,7 +62,13 @@ export const Render: FC<{ portfolios: GetPortfolioFnDatatype }> = ({
                   key={item.id}
                   className="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-transform duration-300 ease-in-out hover:-translate-y-2"
                 >
-                  <button className="absolute inset-0 z-10 outline-none">
+                  <button
+                    className="absolute inset-0 z-10 outline-none"
+                    onClick={() => {
+                      setModalOpen(true)
+                      setSelectedPortfolio(item)
+                    }}
+                  >
                     <span className="sr-only">View Details</span>
                   </button>
                   <Image
@@ -72,7 +84,15 @@ export const Render: FC<{ portfolios: GetPortfolioFnDatatype }> = ({
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button>
-                      <div className="z-10">View Details</div>
+                      <button
+                        onClick={() => {
+                          setModalOpen(true)
+                          setSelectedPortfolio(item)
+                        }}
+                        className="z-10"
+                      >
+                        View Details
+                      </button>
                     </Button>
                   </div>
                 </div>
@@ -81,6 +101,26 @@ export const Render: FC<{ portfolios: GetPortfolioFnDatatype }> = ({
           </div>
         </main>
       </div>
+
+      {modalOpen && selectedPortflio?.portfolioImages.length ? (
+        <Modal empty setModalOpen={setModalOpen}>
+          {/* <div> */}
+          <Swiper
+            navigation={true}
+            modules={[Navigation]}
+            className="max-h-screen"
+          >
+            {selectedPortflio.portfolioImages.map(img => (
+              <SwiperSlide key={img.id} className="">
+                <div className="relative flex items-center justify-center">
+                  <Image src={img.url} alt="" width={500} height={500} />
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+          {/* </div> */}
+        </Modal>
+      ) : null}
     </>
   )
 }
