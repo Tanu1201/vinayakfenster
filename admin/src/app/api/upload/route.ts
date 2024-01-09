@@ -6,13 +6,18 @@ import { storageClient } from '@/lib/storageClient'
 
 export async function POST(request: NextRequest) {
   const session = await getAuthSession()
+  console.log('before uploading...')
+
   if (!session)
     return NextResponse.json({
       success: false
     })
+  console.log('uploading...')
 
   const data = await request.formData()
   const file: File | null = data.get('file') as unknown as File
+
+  console.log({ data, file })
 
   if (!file) return NextResponse.json({ success: false })
 
@@ -20,10 +25,16 @@ export async function POST(request: NextRequest) {
   const buffer = Buffer.from(bytes)
 
   const filename = `${Date.now()}-${Math.random()}-${file.name}`
+
+  console.log({ filename })
+
   const url = await storageClient.addFile({
     filename,
     data: buffer
   })
+
+  console.log({ url })
+
   const { id } = await prisma.resource.create({
     data: {
       newFilename: filename,
@@ -31,6 +42,7 @@ export async function POST(request: NextRequest) {
       url
     }
   })
+  console.log({ id })
 
   return NextResponse.json({ success: true, id, url })
 }
