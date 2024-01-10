@@ -1,9 +1,10 @@
 'use client'
 
+import EditorJS from '@editorjs/editorjs'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { FC, useState } from 'react'
+import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -66,8 +67,116 @@ export const Render: FC<{
   const [isDeleting, setIsDeleting] = useState(false)
   const [file, setFile] = useState<File | undefined>(undefined)
   const [image, setImage] = useState<{ id: string; url: string }>()
+  const [isEditorMounted, setIsMounted] = useState<boolean>(false)
+
+  const editorRef = useRef<EditorJS>()
+  const initializeEditor = useCallback(async () => {
+    const EditorJS = (await import('@editorjs/editorjs')).default
+
+    // @ts-ignore
+    const Table = (await import('@editorjs/table')).default
+    // @ts-ignore
+    const List = (await import('@editorjs/list')).default
+    // @ts-ignore
+    const Image = (await import('@editorjs/image')).default
+    // @ts-ignore
+    const Header = (await import('@editorjs/header')).default
+    // @ts-ignore
+    const Quote = (await import('@editorjs/quote')).default
+    // @ts-ignore
+    const CheckList = (await import('@editorjs/checklist')).default
+    // @ts-ignore
+    const Delimiter = (await import('@editorjs/delimiter')).default
+
+    if (!editorRef.current) {
+      const editor = new EditorJS({
+        holder: 'editor',
+        onReady() {
+          editorRef.current = editor
+        },
+        placeholder: 'Type here to write...',
+        inlineToolbar: true,
+        data: category?.description as any,
+        tools: {
+          header: Header,
+          list: List,
+          image: {
+            class: Image,
+            config: {
+              uploader: {
+                async uploadByFile(file: any) {
+                  // const formData = new FormData()
+                  // formData.append('file', file)
+                  // const res = await fetch('/api/upload', {
+                  //   method: 'POST',
+                  //   body: formData
+                  // })
+                  // const json = await res.json()
+                  // if (json.success && json.id && json.url) {
+                  //   return {
+                  //     success: true,
+                  //     file: {
+                  //       id: json.id,
+                  //       url: json.url
+                  //     }
+                  //   }
+                  // } else {
+                  //   return {
+                  //     success: false
+                  //   }
+                  // }
+                  const formData = new FormData()
+                  formData.append('file', file)
+
+                  const res = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                  })
+                  const json = await res.json()
+                  if (json?.attachments) {
+                    return {
+                      success: true,
+                      file: {
+                        id: json.attachments[0].id,
+                        url: json.attachments[0].url
+                      }
+                    }
+                  } else {
+                    return {
+                      success: false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          table: Table,
+          checklist: CheckList,
+          quote: Quote,
+          delimiter: Delimiter
+        }
+      })
+    }
+  }, [category?.description])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') setIsMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!isEditorMounted) return
+
+    initializeEditor()
+
+    return () => {
+      editorRef.current?.destroy()
+      editorRef.current = undefined
+    }
+  }, [isEditorMounted, initializeEditor])
 
   async function onSubmit(data: FormData) {
+    const editorData = await editorRef.current?.save()
+
     setIsSaving(true)
     try {
       let uploadedFile:
@@ -100,14 +209,16 @@ export const Render: FC<{
       if (!category) {
         const newId = await createCategory({
           ...data,
-          fileId: uploadedFile?.fileId
+          fileId: uploadedFile?.fileId,
+          description: editorData
         })
         router.replace(`/categories/${newId}`)
       } else {
         await updateCategory({
           id: category.id,
           ...data,
-          fileId: uploadedFile?.fileId
+          fileId: uploadedFile?.fileId,
+          description: editorData
         })
       }
       toast({
@@ -293,6 +404,22 @@ export const Render: FC<{
             autoCorrect="off"
             disabled={isSaving}
           />
+
+          {isEditorMounted ? (
+            <div className="col-span-1 items-center md:col-span-2 w-full mt-5 prose prose-neutral dark:prose-invert">
+              <h3 className="w-full bg-transparent text-3xl font-bold">
+                Description
+              </h3>
+              <div id="editor" className="min-h-[360px] w-full" />
+              <p className="text-sm text-gray-500">
+                Use{' '}
+                <kbd className="rounded-md border bg-muted px-1 text-xs uppercase">
+                  Tab
+                </kbd>{' '}
+                to open the command menu.
+              </p>
+            </div>
+          ) : undefined}
         </form>
       </Form>
       {category ? (

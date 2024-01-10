@@ -30,11 +30,13 @@ export type GetCategoryFnDataType = UnwrapPromise<
 export const createCategory = async ({
   name,
   slug,
-  fileId
+  fileId,
+  description
 }: {
   name: string
   slug: string
   fileId?: string
+  description?: any
 }) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
@@ -45,7 +47,8 @@ export const createCategory = async ({
       slug,
       createdById: session.user.id,
       updatedById: session.user.id,
-      resourceId: fileId
+      resourceId: fileId,
+      description
     }
   })
 
@@ -59,12 +62,14 @@ export const updateCategory = async ({
   id,
   name,
   slug,
-  fileId
+  fileId,
+  description
 }: {
   id: string
   name: string
   slug: string
   fileId?: string
+  description?: any
 }) => {
   const session = await getAuthSession()
   if (!session) throw new Error('Unauthorized')
@@ -77,7 +82,8 @@ export const updateCategory = async ({
       name,
       slug,
       updatedById: session.user.id,
-      resourceId: fileId
+      resourceId: fileId,
+      description
     }
   })
 

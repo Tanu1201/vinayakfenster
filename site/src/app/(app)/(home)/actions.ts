@@ -23,3 +23,11 @@ export const getTopTestimonials = async () => {
     }
   })
 }
+
+export const getCategories = async () => {
+  return await prisma.category.findMany({
+    include: {
+      resource: true
+    }
+  })
+}

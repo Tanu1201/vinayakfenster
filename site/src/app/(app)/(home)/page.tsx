@@ -1,17 +1,24 @@
 import { Button } from '@/components/UI/Button'
 import { siteConfig } from '@/lib/siteConfig'
+import edjsHTML from 'editorjs-html'
 import { Metadata, NextPage } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { IoIosStarOutline } from 'react-icons/io'
-import { getTopBrands } from './actions'
+import { getCategories, getTopBrands } from './actions'
+
+const edjsParser = edjsHTML()
 
 export const generateMetadata = async (): Promise<Metadata> => ({
   title: 'Home' + ' | ' + siteConfig.name
 })
 
 const Home: NextPage = async () => {
-  const topBrands = await getTopBrands()
+  const [topBrands, categories] = await Promise.all([
+    getTopBrands(),
+    getCategories()
+  ])
+
   return (
     <>
       <div className="flex px-4 lg:px-16 flex-col-reverse md:items-center gap-8 md:flex-row mt-8">
@@ -36,6 +43,55 @@ const Home: NextPage = async () => {
             height={1}
           />
         </div>
+      </div>
+
+      <div className="block mt-32">
+        {categories
+          .filter(c => c.resource)
+          .map(category => (
+            <div
+              key={category.id}
+              className={`px-4 md:px-16 gap-32 mb-32 flex flex-col md:flex-row justify-between`}
+            >
+              <div className="md:w-1/2 flex flex-col gap-8">
+                <div className="sticky top-16 ">
+                  <h3
+                    className="text-4xl relative pt-16 pb-2 font-semibold bg-gradient-radial "
+                    style={{
+                      backgroundImage:
+                        ' linear-gradient(356deg, rgba(64, 0, 255, 0), #fff 42%)'
+                    }}
+                  >
+                    {category.name}
+                  </h3>
+                </div>
+                <div className="">
+                  {category.description ? (
+                    <article
+                      className="prose"
+                      dangerouslySetInnerHTML={{
+                        __html: edjsParser
+                          .parse(category?.description as any)
+                          .join('')
+                      }}
+                    />
+                  ) : null}
+                </div>
+                <div>
+                  <Link href={`/categories/${category.slug}`}>
+                    <Button>See Products</Button>
+                  </Link>
+                </div>
+              </div>
+              <Image
+                src={category.resource!.url}
+                alt=""
+                className="md:w-1/2"
+                height={1000}
+                width={1000}
+              />
+            </div>
+          ))}
       </div>
 
       <div className="mt-16">
@@ -78,6 +134,7 @@ const Home: NextPage = async () => {
             </Link>
           </div>
         </div>
+
         <div className="w-full md:w-1/2 relative px-8 sm:px-16 xl:px-32">
           <Image
             src="/Home/hero2.png"
@@ -89,6 +146,7 @@ const Home: NextPage = async () => {
           />
         </div>
       </div>
+
       <div className="h-4 bg-[#f0f0f0] mx-80" />
 
       <div className="flex px-4 lg:px-16 flex-col md:items-center gap-8 md:flex-row mt-32">
