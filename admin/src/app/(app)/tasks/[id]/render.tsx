@@ -119,19 +119,40 @@ export const Render: FC<{
             config: {
               uploader: {
                 async uploadByFile(file: any) {
+                  // const formData = new FormData()
+                  // formData.append('file', file)
+                  // const res = await fetch('/api/upload', {
+                  //   method: 'POST',
+                  //   body: formData
+                  // })
+                  // const json = await res.json()
+                  // if (json.success && json.id && json.url) {
+                  //   return {
+                  //     success: true,
+                  //     file: {
+                  //       id: json.id,
+                  //       url: json.url
+                  //     }
+                  //   }
+                  // } else {
+                  //   return {
+                  //     success: false
+                  //   }
+                  // }
                   const formData = new FormData()
                   formData.append('file', file)
+
                   const res = await fetch('/api/upload', {
                     method: 'POST',
                     body: formData
                   })
                   const json = await res.json()
-                  if (json.success && json.id && json.url) {
+                  if (json?.attachments) {
                     return {
                       success: true,
                       file: {
-                        id: json.id,
-                        url: json.url
+                        id: json.attachments[0].id,
+                        url: json.attachments[0].url
                       }
                     }
                   } else {

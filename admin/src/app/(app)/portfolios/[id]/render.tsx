@@ -81,15 +81,16 @@ export const Render: FC<{
         for (const file of files) {
           const formData = new FormData()
           formData.append('file', file)
+
           const res = await fetch('/api/upload', {
             method: 'POST',
             body: formData
           })
           const json = await res.json()
-          if (json.success && json.id && json.url) {
+          if (json?.attachments) {
             uploadedFiles.push({
-              fileId: json.id,
-              fileUrl: json.url
+              fileId: json.attachments[0].id,
+              fileUrl: json.attachments[0].url
             })
           } else {
             toast({
@@ -97,10 +98,10 @@ export const Render: FC<{
               variant: 'destructive'
             })
             setIsSaving(false)
-            return
           }
         }
       }
+
       if (!portfolio) {
         const newId = await createPortfolio({
           ...data,
