@@ -77,25 +77,45 @@ export const Render: FC<{
           }
         | undefined = undefined
       if (file) {
+        // const formData = new FormData()
+        // formData.append('file', file)
+        // const res = await fetch('/api/upload', {
+        //   method: 'POST',
+        //   body: formData
+        // })
+        // const json = await res.json()
+        // if (json.success && json.id && json.url) {
+        //   uploadedFile = {
+        //     fileId: json.id,
+        //     fileUrl: json.url
+        //   }
+        // } else {
+        //   toast({
+        //     title: 'Error uploading file',
+        //     variant: 'destructive'
+        //   })
+        //   setIsSaving(false)
+        //   return
+        // }
+
         const formData = new FormData()
         formData.append('file', file)
+
         const res = await fetch('/api/upload', {
           method: 'POST',
           body: formData
         })
         const json = await res.json()
-        if (json.success && json.id && json.url) {
+        if (json?.attachments) {
           uploadedFile = {
-            fileId: json.id,
-            fileUrl: json.url
+            fileId: json.attachments[0].id,
+            fileUrl: json.attachments[0].url
           }
         } else {
           toast({
             title: 'Error uploading file',
             variant: 'destructive'
           })
-          setIsSaving(false)
-          return
         }
       }
       if (!brand) {
