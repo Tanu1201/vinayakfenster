@@ -51,7 +51,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const router = useRouter()
   const pathname = usePathname()
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams()!
 
   // Search params
   const page = searchParams?.get('page') ?? '1'

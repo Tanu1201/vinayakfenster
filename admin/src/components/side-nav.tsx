@@ -19,7 +19,7 @@ interface SideNavProps {
 }
 
 export const SideNav: FC<SideNavProps> = ({ items }) => {
-  const path = usePathname()
+  const path = usePathname()!
 
   if (!items?.length) return null
 
