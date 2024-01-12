@@ -21,27 +21,31 @@ const Home: NextPage = async () => {
 
   return (
     <>
-      <div className="flex px-4 lg:px-16 flex-col-reverse md:items-center gap-8 md:flex-row mt-8">
-        <div className="md:w-1/2 flex flex-col gap-4">
-          <h1 className="font-semibold leading-tight text-5xl md:text-7xl">
-            The Perfect way to showcase
-          </h1>
-          <span className="text-lg">
-            Here you can find the best window solutions for your project.
-          </span>
-          <div className="font-semibold mt-2">
-            <Button>Learn More</Button>
-          </div>
-        </div>
-        <div className="w-full md:w-1/2 relative px-8 sm:px-16 xl:px-32">
+      <div className="flex  flex-col-reverse md:items-center gap-8 md:flex-row">
+        <div className="relative h-[600px] px-4 lg:px-16 w-full overflow-hidden">
           <Image
-            src="/Home/hero.png"
-            alt=""
-            layout="responsive"
-            // objectFit="contain"
-            width={1}
-            height={1}
+            alt="Beautiful room with fensters, windows, and curtains"
+            className="absolute inset-0 object-cover w-full h-full"
+            height={600}
+            src="/Home/homepage.jpg"
+            style={{
+              aspectRatio: '1200/600',
+              objectFit: 'cover'
+            }}
+            width={1200}
           />
+          <div className="absolute inset-0 bg-black/40" />
+          <div className="relative z-10 flex flex-col w-1/2 space-y-4 justify-center h-full px-4 text-white">
+            <h1 className="font-semibold leading-tight text-5xl md:text-7xl">
+              The Perfect way to showcase
+            </h1>
+            <span className="text-lg">
+              Here you can find the best window solutions for your project.
+            </span>
+            <Link href="/portfolio" className="font-semibold mt-2">
+              <Button white>Learn More</Button>
+            </Link>
+          </div>
         </div>
       </div>
 
