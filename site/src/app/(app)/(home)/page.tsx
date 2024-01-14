@@ -63,7 +63,7 @@ const Home: NextPage = async () => {
                     className="text-4xl relative pt-16 pb-2 font-semibold bg-gradient-radial "
                     style={{
                       backgroundImage:
-                        ' linear-gradient(356deg, rgba(64, 0, 255, 0), #fff 42%)'
+                        'linear-gradient(356deg, rgba(64, 0, 255, 0), #fff 42%)'
                     }}
                   >
                     {category.name}
@@ -87,13 +87,22 @@ const Home: NextPage = async () => {
                   </Link>
                 </div>
               </div>
-              <Image
-                src={category.resource!.url}
-                alt=""
-                className="md:w-1/2"
-                height={1000}
-                width={1000}
-              />
+              <Link
+                href={`/categories/${category.slug}`}
+                className="relative md:w-1/2 group"
+              >
+                <Image
+                  src={category.resource!.url}
+                  alt=""
+                  className="shadow-2xl rounded-xl group-hover:scale-105 transition-all duration-500 ease-in-out"
+                  height={1000}
+                  width={1000}
+                />
+                <div className="absolute inset-0 rounded-xl group-hover:scale-105 group-hover:bg-black/40 transition-all duration-500 ease-in-out" />
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white hidden group-hover:block">
+                  <Button white>See Products</Button>
+                </div>
+              </Link>
             </div>
           ))}
       </div>
