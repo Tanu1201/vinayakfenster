@@ -9,6 +9,15 @@ export const Modal: FC<{
     document.body.classList.toggle('overflow-hidden')
   }, [])
 
+  useEffect(() => {
+    if (!setModalOpen) return
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        setModalOpen(false)
+      }
+    })
+  }, [setModalOpen])
+
   return (
     <div className="fixed inset-0 z-[9999] flex max-h-screen items-center justify-center px-4 pb-4">
       <div className="overflow-hidden" />
@@ -23,7 +32,7 @@ export const Modal: FC<{
               <div className="absolute top-0 right-0 pt-4 pr-4">
                 <button
                   type="button"
-                  className="text-white hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150"
+                  className="text-white hover:text-gray-500 focus:outline-none focus:text-gray-500 transition ease-in-out duration-150 z-[100]"
                   aria-label="Close"
                   onClick={() => setModalOpen(false)}
                 >
@@ -44,7 +53,7 @@ export const Modal: FC<{
               </div>
             </>
           ) : null}
-          {children}
+          <div className="w-[90%]">{children}</div>
         </>
       ) : (
         <div
