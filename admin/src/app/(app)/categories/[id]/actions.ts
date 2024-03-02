@@ -31,10 +31,12 @@ export const createCategory = async ({
   name,
   slug,
   fileId,
-  description
+  description,
+  order
 }: {
   name: string
   slug: string
+  order: number
   fileId?: string
   description?: any
 }) => {
@@ -48,7 +50,8 @@ export const createCategory = async ({
       createdById: session.user.id,
       updatedById: session.user.id,
       resourceId: fileId,
-      description
+      description,
+      order
     }
   })
 
@@ -63,11 +66,13 @@ export const updateCategory = async ({
   name,
   slug,
   fileId,
-  description
+  description,
+  order
 }: {
   id: string
   name: string
   slug: string
+  order: number
   fileId?: string
   description?: any
 }) => {
@@ -83,7 +88,8 @@ export const updateCategory = async ({
       slug,
       updatedById: session.user.id,
       resourceId: fileId,
-      description
+      description,
+      order
     }
   })
 

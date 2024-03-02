@@ -47,7 +47,8 @@ import {
 
 const Categorieschema = z.object({
   name: z.string().min(1),
-  slug: z.string().min(1)
+  slug: z.string().min(1),
+  order: z.string()
 })
 
 type FormData = z.infer<typeof Categorieschema>
@@ -59,7 +60,8 @@ export const Render: FC<{
     resolver: zodResolver(Categorieschema),
     defaultValues: {
       name: category?.name ?? '',
-      slug: category?.slug ?? ''
+      slug: category?.slug ?? '',
+      order: category?.order?.toString() ?? ''
     }
   })
   const router = useRouter()
@@ -210,7 +212,8 @@ export const Render: FC<{
         const newId = await createCategory({
           ...data,
           fileId: uploadedFile?.fileId,
-          description: editorData
+          description: editorData,
+          order: parseInt(data.order)
         })
         router.replace(`/categories/${newId}`)
       } else {
@@ -218,7 +221,8 @@ export const Render: FC<{
           id: category.id,
           ...data,
           fileId: uploadedFile?.fileId,
-          description: editorData
+          description: editorData,
+          order: parseInt(data.order)
         })
       }
       toast({
@@ -374,6 +378,27 @@ export const Render: FC<{
                     placeholder="Enter slug"
                     autoCapitalize="none"
                     autoComplete="slug"
+                    autoCorrect="off"
+                    disabled={isSaving}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="order"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Order</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="Enter Order"
+                    autoCapitalize="none"
+                    autoComplete="order"
                     autoCorrect="off"
                     disabled={isSaving}
                     {...field}

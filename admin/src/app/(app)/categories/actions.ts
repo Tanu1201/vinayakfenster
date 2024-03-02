@@ -31,13 +31,14 @@ export const getCategories = async ({
       select: {
         id: true,
         name: true,
+        order: true,
         createdAt: true,
         updatedAt: true
       },
       skip: (page - 1) * limit,
       take: limit,
       orderBy: {
-        [sortBy || 'createdAt']: sortOrder || 'desc'
+        [sortBy || 'order']: sortOrder || 'asc'
       }
     }),
     prisma.category.count({

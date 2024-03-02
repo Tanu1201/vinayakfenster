@@ -42,6 +42,13 @@ export const Render: FC<{
             )
           },
           {
+            accessorKey: 'order',
+            header: ({ column }) => (
+              <DataTableColumnHeader column={column} title="Order" />
+            ),
+            cell: ({ row }) => row.original.order
+          },
+          {
             accessorKey: 'createdAt',
             header: ({ column }) => (
               <DataTableColumnHeader column={column} title="Created At" />
