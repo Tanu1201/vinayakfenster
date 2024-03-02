@@ -28,6 +28,9 @@ export const getCategories = async () => {
   return await prisma.category.findMany({
     include: {
       resource: true
+    },
+    orderBy: {
+      order: 'asc'
     }
   })
 }
