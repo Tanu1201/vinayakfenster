@@ -36,8 +36,12 @@ export const getBrandProducts = async ({
 }) => {
   return await prisma.product.findMany({
     where: {
-      brand: {
-        slug
+      productBrands: {
+        some: {
+          brand: {
+            slug
+          }
+        }
       }
     },
     skip: (page - 1) * limit,

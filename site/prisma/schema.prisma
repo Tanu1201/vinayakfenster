@@ -62,12 +62,9 @@ model Product {
   description Json?
   slug        String @unique
 
-  brandId    String?
-  categoryId String?
-
-  brand         Brand?     @relation(fields: [brandId], references: [id])
-  category      Category?  @relation(fields: [categoryId], references: [id])
-  productImages Resource[] @relation("productImages")
+  productImages     Resource[]        @relation("productImages")
+  productCategories ProductCategory[]
+  productBrands     ProductBrand[]
 
   createdById String
   updatedById String
@@ -88,17 +85,41 @@ model Category {
 
   resourceId String? @unique
 
-  products Product[]
   resource Resource? @relation(fields: [resourceId], references: [id])
 
-  createdById String
-  updatedById String
-  createdAt   DateTime @default(now()) @db.Timestamptz()
-  updatedAt   DateTime @updatedAt @db.Timestamptz()
-  createdBy   User     @relation("categoryCreatedBy", fields: [createdById], references: [id])
-  updatedBy   User     @relation("categoryUpdatedBy", fields: [updatedById], references: [id])
+  createdById      String
+  updatedById      String
+  createdAt        DateTime          @default(now()) @db.Timestamptz()
+  updatedAt        DateTime          @updatedAt @db.Timestamptz()
+  createdBy        User              @relation("categoryCreatedBy", fields: [createdById], references: [id])
+  updatedBy        User              @relation("categoryUpdatedBy", fields: [updatedById], references: [id])
+  categoryProducts ProductCategory[]
 
   @@map("Categories")
+}
+
+model ProductCategory {
+  id         String @id @default(uuid())
+  productId  String
+  categoryId String
+
+  product  Product  @relation(fields: [productId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
+
+  @@unique([productId, categoryId])
+  @@map("ProductCategories")
+}
+
+model ProductBrand {
+  id        String @id @default(uuid())
+  productId String
+  brandId   String
+
+  product Product @relation(fields: [productId], references: [id])
+  brand   Brand   @relation(fields: [brandId], references: [id])
+
+  @@unique([productId, brandId])
+  @@map("ProductBrands")
 }
 
 model Brand {
@@ -110,8 +131,8 @@ model Brand {
 
   resourceId String? @unique
 
-  products Product[]
-  resource Resource? @relation(fields: [resourceId], references: [id])
+  resource      Resource?      @relation(fields: [resourceId], references: [id])
+  brandProducts ProductBrand[]
 
   createdById String
   updatedById String

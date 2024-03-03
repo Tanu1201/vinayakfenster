@@ -38,8 +38,12 @@ export const getCategoryProducts = async ({
 }) => {
   return await prisma.product.findMany({
     where: {
-      category: {
-        slug
+      productCategories: {
+        some: {
+          category: {
+            slug
+          }
+        }
       }
     },
     skip: (page - 1) * limit,

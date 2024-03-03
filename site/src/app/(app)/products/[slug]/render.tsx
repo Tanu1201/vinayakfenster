@@ -47,23 +47,31 @@ export const Render: FC<{ product: GetProductFnDataType }> = ({ product }) => {
         <div className="grid gap-4 md:gap-10 items-start">
           <div className="grid gap-4">
             <h1 className="font-bold text-3xl lg:text-4xl">{product?.name}</h1>
-            <div>
-              {product?.category ? (
+            {/* categories */}
+            <h3 className="text-xl font-semibold text-gray-800">Categories</h3>
+            <div className="">
+              {product.productCategories.map(category => (
                 <Link
-                  href={`/categories/${product.category.slug}`}
-                  className="text-lg text-gray-500 block"
+                  key={category.category.id}
+                  href={`/categories/${category.category.slug}`}
+                  className="text-lg font-semibold text-gray-500 block"
                 >
-                  {product.category.name}
+                  {category.category.name}
                 </Link>
-              ) : null}
-              {product?.brand ? (
+              ))}
+            </div>
+            {/* brands */}
+            <h3 className="text-xl font-semibold text-gray-800">Brands</h3>
+            <div>
+              {product.productBrands.map(brand => (
                 <Link
-                  href={`/brands/${product.brand.slug}`}
+                  key={brand.brand.id}
+                  href={`/brands/${brand.brand.slug}`}
                   className="text-xl font-semibold text-gray-500 block"
                 >
-                  {product.brand.name}
+                  {brand.brand.name}
                 </Link>
-              ) : null}
+              ))}
             </div>
             <div>
               {product.description ? (

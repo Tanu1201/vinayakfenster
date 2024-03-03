@@ -10,8 +10,28 @@ export const getProduct = async (slug: string) => {
     },
     include: {
       productImages: true,
-      brand: true,
-      category: true
+      productCategories: {
+        select: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+              slug: true
+            }
+          }
+        }
+      },
+      productBrands: {
+        select: {
+          brand: {
+            select: {
+              id: true,
+              name: true,
+              slug: true
+            }
+          }
+        }
+      }
     }
   })
 }

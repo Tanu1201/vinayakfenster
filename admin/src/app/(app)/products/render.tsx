@@ -46,28 +46,36 @@ export const Render: FC<{
             header: ({ column }) => (
               <DataTableColumnHeader column={column} title="Brand" />
             ),
-            cell: ({ row }) => (
-              <Link
-                className="underline underline-offset-4"
-                href={`/brands/${row.original.brand?.id}`}
-              >
-                {row.original.brand?.name}
-              </Link>
-            )
+            cell: ({ row }) =>
+              row.original.productBrands.map((productBrand, index) => (
+                <Link
+                  key={productBrand.id}
+                  className="underline underline-offset-4"
+                  href={`/brands/${productBrand.brand?.id}`}
+                >
+                  {productBrand.brand?.name}
+                  {index < row.original.productBrands.length - 1 ? ', ' : ''}
+                </Link>
+              ))
           },
           {
             accessorKey: 'category',
             header: ({ column }) => (
               <DataTableColumnHeader column={column} title="Category" />
             ),
-            cell: ({ row }) => (
-              <Link
-                className="underline underline-offset-4"
-                href={`/categories/${row.original.category?.id}`}
-              >
-                {row.original.category?.name}
-              </Link>
-            )
+            cell: ({ row }) =>
+              row.original.productCategories.map((productCategory, index) => (
+                <Link
+                  key={productCategory.id}
+                  className="underline underline-offset-4"
+                  href={`/categories/${productCategory.category?.id}`}
+                >
+                  {productCategory.category?.name}
+                  {index < row.original.productCategories.length - 1
+                    ? ', '
+                    : ''}
+                </Link>
+              ))
           },
           {
             accessorKey: 'createdAt',

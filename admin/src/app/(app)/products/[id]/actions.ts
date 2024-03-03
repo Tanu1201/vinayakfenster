@@ -18,8 +18,16 @@ export const getProduct = async (id: string) => {
     include: {
       createdBy: true,
       updatedBy: true,
-      brand: true,
-      category: true,
+      productBrands: {
+        select: {
+          brand: true
+        }
+      },
+      productCategories: {
+        select: {
+          category: true
+        }
+      },
       productImages: true
     }
   })
@@ -31,15 +39,15 @@ export const createProduct = async ({
   name,
   slug,
   description,
-  brandId,
-  categoryId,
+  brandIds,
+  categoryIds,
   fileIds
 }: {
   name: string
   slug: string
   description: any
-  brandId?: string
-  categoryId?: string
+  brandIds: string[]
+  categoryIds: string[]
   fileIds?: string[]
 }) => {
   const session = await getAuthSession()
@@ -49,10 +57,18 @@ export const createProduct = async ({
       name,
       slug,
       description,
-      brandId,
-      categoryId,
       createdById: session.user.id,
-      updatedById: session.user.id
+      updatedById: session.user.id,
+      productBrands: {
+        create: brandIds.map(brandId => ({
+          brandId
+        }))
+      },
+      productCategories: {
+        create: categoryIds.map(categoryId => ({
+          categoryId
+        }))
+      }
     }
   })
 
@@ -79,16 +95,16 @@ export const updateProduct = async ({
   name,
   slug,
   description,
-  brandId,
-  categoryId,
+  brandIds,
+  categoryIds,
   fileIds
 }: {
   id: string
   name: string
   slug: string
   description: any
-  brandId?: string
-  categoryId?: string
+  brandIds: string[]
+  categoryIds: string[]
   fileIds?: string[]
 }) => {
   const session = await getAuthSession()
@@ -101,9 +117,19 @@ export const updateProduct = async ({
       name,
       slug,
       description,
-      brandId,
-      categoryId,
-      updatedById: session.user.id
+      updatedById: session.user.id,
+      productBrands: {
+        deleteMany: {},
+        create: brandIds.map(brandId => ({
+          brandId
+        }))
+      },
+      productCategories: {
+        deleteMany: {},
+        create: categoryIds.map(categoryId => ({
+          categoryId
+        }))
+      }
     }
   })
 

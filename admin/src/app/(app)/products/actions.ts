@@ -33,16 +33,26 @@ export const getProducts = async ({
         name: true,
         createdAt: true,
         updatedAt: true,
-        brand: {
+        productBrands: {
           select: {
             id: true,
-            name: true
+            brand: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
           }
         },
-        category: {
+        productCategories: {
           select: {
             id: true,
-            name: true
+            category: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
           }
         }
       },
