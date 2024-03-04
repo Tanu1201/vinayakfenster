@@ -8,6 +8,7 @@ import { DataTableColumnHeader } from '@/components/data-table/data-table-column
 import { Heading } from '@/components/heading'
 import { Icons } from '@/components/icons'
 import { Shell } from '@/components/shell'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatDateTime, timesAgo } from '@/lib/formatDate'
 import { GetProductsFnDataType } from './actions'
@@ -44,38 +45,42 @@ export const Render: FC<{
           {
             accessorKey: 'brand',
             header: ({ column }) => (
-              <DataTableColumnHeader column={column} title="Brand" />
+              <DataTableColumnHeader column={column} title="Brands" />
             ),
-            cell: ({ row }) =>
-              row.original.productBrands.map((productBrand, index) => (
-                <Link
-                  key={productBrand.id}
-                  className="underline underline-offset-4"
-                  href={`/brands/${productBrand.brand?.id}`}
-                >
-                  {productBrand.brand?.name}
-                  {index < row.original.productBrands.length - 1 ? ', ' : ''}
-                </Link>
-              ))
+            cell: ({ row }) => (
+              <div className="flex gap-1">
+                {row.original.productBrands.map(productBrand => (
+                  <Link
+                    key={productBrand.id}
+                    className="underline underline-offset-4"
+                    href={`/brands/${productBrand.brand?.id}`}
+                  >
+                    <Badge>{productBrand.brand?.name}</Badge>
+                  </Link>
+                ))}
+              </div>
+            ),
+            enableSorting: false
           },
           {
             accessorKey: 'category',
             header: ({ column }) => (
-              <DataTableColumnHeader column={column} title="Category" />
+              <DataTableColumnHeader column={column} title="Categories" />
             ),
-            cell: ({ row }) =>
-              row.original.productCategories.map((productCategory, index) => (
-                <Link
-                  key={productCategory.id}
-                  className="underline underline-offset-4"
-                  href={`/categories/${productCategory.category?.id}`}
-                >
-                  {productCategory.category?.name}
-                  {index < row.original.productCategories.length - 1
-                    ? ', '
-                    : ''}
-                </Link>
-              ))
+            cell: ({ row }) => (
+              <div className="flex gap-1">
+                {row.original.productCategories.map(productCategory => (
+                  <Link
+                    key={productCategory.id}
+                    className="underline underline-offset-4"
+                    href={`/categories/${productCategory.category?.id}`}
+                  >
+                    <Badge>{productCategory.category?.name}</Badge>
+                  </Link>
+                ))}
+              </div>
+            ),
+            enableSorting: false
           },
           {
             accessorKey: 'createdAt',

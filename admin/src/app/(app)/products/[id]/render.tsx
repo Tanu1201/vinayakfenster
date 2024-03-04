@@ -33,13 +33,7 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
+import MultipleSelector from '@/components/ui/multiple-selector'
 import { toast } from '@/components/ui/use-toast'
 import { formatDateTime, timesAgo } from '@/lib/formatDate'
 import { Delete } from 'lucide-react'
@@ -57,8 +51,18 @@ import {
 const ProductSchema = z.object({
   name: z.string().min(1),
   slug: z.string().min(1),
-  brandId: z.string().optional(),
-  categoryId: z.string().optional()
+  brands: z.array(
+    z.object({
+      label: z.string(),
+      value: z.string()
+    })
+  ),
+  categories: z.array(
+    z.object({
+      label: z.string(),
+      value: z.string()
+    })
+  )
 })
 
 type FormData = z.infer<typeof ProductSchema>
@@ -73,8 +77,16 @@ export const Render: FC<{
     defaultValues: {
       name: product?.name ?? '',
       slug: product?.slug ?? '',
-      brandId: product?.brand?.id,
-      categoryId: product?.category?.id
+      brands:
+        product?.productBrands.map(pb => ({
+          label: pb.brand.name,
+          value: pb.brand.id
+        })) ?? [],
+      categories:
+        product?.productCategories.map(pc => ({
+          label: pc.category.name,
+          value: pc.category.id
+        })) ?? []
     }
   })
   const router = useRouter()
@@ -250,7 +262,9 @@ export const Render: FC<{
         const newId = await createProduct({
           ...data,
           description: editorData,
-          fileIds: uploadedFiles?.map(f => f.fileId)
+          fileIds: uploadedFiles?.map(f => f.fileId),
+          brandIds: data.brands.map(b => b.value),
+          categoryIds: data.categories.map(c => c.value)
         })
         router.replace(`/products/${newId}`)
       } else {
@@ -258,7 +272,9 @@ export const Render: FC<{
           id: product.id,
           ...data,
           description: editorData,
-          fileIds: uploadedFiles?.map(f => f.fileId)
+          fileIds: uploadedFiles?.map(f => f.fileId),
+          brandIds: data.brands.map(b => b.value),
+          categoryIds: data.categories.map(c => c.value)
         })
       }
       setImages([])
@@ -405,28 +421,19 @@ export const Render: FC<{
 
           <FormField
             control={form.control}
-            name="brandId"
+            name="brands"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Brand</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={isSaving}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select brand" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {brands?.map(({ id, name }) => (
-                      <SelectItem key={id} value={id}>
-                        {name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormLabel>Brands</FormLabel>
+                <MultipleSelector
+                  defaultOptions={brands?.map(({ id, name }) => ({
+                    label: name,
+                    value: id
+                  }))}
+                  placeholder="Select Brands"
+                  {...field}
+                />
+
                 <FormMessage />
               </FormItem>
             )}
@@ -434,28 +441,19 @@ export const Render: FC<{
 
           <FormField
             control={form.control}
-            name="categoryId"
+            name="categories"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Category</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={isSaving}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {categories?.map(({ id, name }) => (
-                      <SelectItem key={id} value={id}>
-                        {name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormLabel>Categories</FormLabel>
+                <MultipleSelector
+                  defaultOptions={categories?.map(({ id, name }) => ({
+                    label: name,
+                    value: id
+                  }))}
+                  placeholder="Select Categories"
+                  {...field}
+                />
+                <FormMessage />
                 <FormMessage />
               </FormItem>
             )}
