@@ -49,6 +49,36 @@ const Home: NextPage = async () => {
         </div>
       </div>
 
+      <div className="mt-16">
+        <div className="text-center font-semibold text-lg">
+          Trusted by individuals and teams at top companies worldwide
+        </div>
+
+        <h2 className='font-semibold text-3xl text-center mt-8'>Our Premium Brands</h2>
+
+        <div className="grid grid-cols-2 px-8 sm:px-16 xl:px-32 items-center md:flex mt-8 justify-center gap-16">
+          {topBrands.map(brand => (
+            <Link
+              href={`/brands/${brand.slug}`}
+              key={brand.id}
+              className="flex flex-col items-center gap-2"
+            >
+              <div key={brand.id}>
+                {brand.resource ? (
+                  <Image
+                    src={brand.resource?.url}
+                    alt=""
+                    height={200}
+                    width={200}
+                  />
+                ) : null}
+              </div>
+              <div className="text-sm">{brand.name}</div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
       <div className="block mt-32">
         {categories
           .filter(c => c.resource)
@@ -107,33 +137,7 @@ const Home: NextPage = async () => {
           ))}
       </div>
 
-      <div className="mt-16">
-        <div className="text-center font-semibold text-lg">
-          Trusted by individuals and teams at top companies worldwide
-        </div>
-
-        <div className="grid grid-cols-2 px-8 sm:px-16 xl:px-32 items-center md:flex mt-8 justify-center gap-16">
-          {topBrands.map(brand => (
-            <Link
-              href={`/brands/${brand.slug}`}
-              key={brand.id}
-              className="flex flex-col items-center gap-2"
-            >
-              <div key={brand.id}>
-                {brand.resource ? (
-                  <Image
-                    src={brand.resource?.url}
-                    alt=""
-                    height={200}
-                    width={200}
-                  />
-                ) : null}
-              </div>
-              <div className="text-sm">{brand.name}</div>
-            </Link>
-          ))}
-        </div>
-      </div>
+      
 
       <div className="flex border mx-8 py-16 px-8 flex-col-reverse items-center gap-8 md:flex-row mt-32">
         <div className="md:w-1/2 flex flex-col gap-4">
