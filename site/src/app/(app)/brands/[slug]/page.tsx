@@ -1,35 +1,38 @@
-import { siteConfig } from '@/lib/siteConfig'
-import { Metadata } from 'next/types'
-import { getBrand, getBrandProducts } from './actions'
-import { Render } from './render'
+import { siteConfig } from "@/lib/siteConfig";
+import { Metadata } from "next/types";
+import { getBrand, getBrandProducts } from "./actions";
+import { Render } from "./render";
 
-export const generateMetadata = (props: {
-  params: { slug: string }
-}): Metadata => ({
-  title: 'Brand - ' + props.params.slug + ' | ' + siteConfig.name
-})
+export const generateMetadata = async (props: {
+  params: { slug: string };
+}): Promise<Metadata> => {
+  const brand = await getBrand(props.params.slug);
+  return {
+    title: brand?.name + " | " + siteConfig.name,
+  };
+};
 
 const BrandPage = async ({
   params,
-  searchParams
+  searchParams,
 }: {
-  params: { slug: string }
+  params: { slug: string };
   searchParams: {
-    page?: string
-    limit?: string
-  }
+    page?: string;
+    limit?: string;
+  };
 }) => {
-  const page = searchParams.page ? parseInt(searchParams.page) : 1
-  const limit = searchParams.limit ? parseInt(searchParams.limit) : 10
+  const page = searchParams.page ? parseInt(searchParams.page) : 1;
+  const limit = searchParams.limit ? parseInt(searchParams.limit) : 10;
 
-  const brand = await getBrand(params.slug)
+  const brand = await getBrand(params.slug);
   const products = await getBrandProducts({
     slug: params.slug,
     page,
-    limit
-  })
+    limit,
+  });
 
-  return <Render brand={brand} products={products} />
-}
+  return <Render brand={brand} products={products} />;
+};
 
-export default BrandPage
+export default BrandPage;

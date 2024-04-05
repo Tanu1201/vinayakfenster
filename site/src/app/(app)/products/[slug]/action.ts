@@ -1,12 +1,12 @@
-'use server'
+"use server";
 
-import { prisma } from '@/lib/db'
-import { UnwrapPromise } from '@/types/unwrapPromise'
+import { prisma } from "@/lib/db";
+import { UnwrapPromise } from "@/types/unwrapPromise";
 
 export const getProduct = async (slug: string) => {
   return await prisma.product.findFirst({
     where: {
-      slug
+      slug,
     },
     include: {
       productImages: true,
@@ -16,10 +16,10 @@ export const getProduct = async (slug: string) => {
             select: {
               id: true,
               name: true,
-              slug: true
-            }
-          }
-        }
+              slug: true,
+            },
+          },
+        },
       },
       productBrands: {
         select: {
@@ -27,13 +27,13 @@ export const getProduct = async (slug: string) => {
             select: {
               id: true,
               name: true,
-              slug: true
-            }
-          }
-        }
-      }
-    }
-  })
-}
+              slug: true,
+            },
+          },
+        },
+      },
+    },
+  });
+};
 
-export type GetProductFnDataType = UnwrapPromise<ReturnType<typeof getProduct>>
+export type GetProductFnDataType = UnwrapPromise<ReturnType<typeof getProduct>>;

@@ -1,15 +1,15 @@
-import { siteConfig } from '@/lib/siteConfig'
-import { Metadata, NextPage } from 'next'
-import Image from 'next/image'
-import Link from 'next/link'
-import { getBrands } from './actions'
+import { siteConfig } from "@/lib/siteConfig";
+import { Metadata, NextPage } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { getBrands } from "./actions";
 
 export const generateMetadata = (): Metadata => ({
-  title: 'Brands' + ' | ' + siteConfig.name
-})
+  title: "Our Premium Brands" + " | " + siteConfig.name,
+});
 
 const Brands: NextPage = async () => {
-  const brands = await getBrands()
+  const brands = await getBrands();
   return (
     <>
       <div className="relative w-full h-[50dvh]">
@@ -40,7 +40,7 @@ const Brands: NextPage = async () => {
       </p>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8 sm:gap-32 mt-16 px-4 lg:px-32">
-        {brands.map(brand => (
+        {brands.map((brand) => (
           <Link
             href={`/brands/${brand.slug}`}
             key={brand.id}
@@ -61,7 +61,7 @@ const Brands: NextPage = async () => {
         ))}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Brands
+export default Brands;
