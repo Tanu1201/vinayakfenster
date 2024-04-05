@@ -1,23 +1,23 @@
-import { Button } from '@/components/UI/Button'
-import { siteConfig } from '@/lib/siteConfig'
-import edjsHTML from 'editorjs-html'
-import { Metadata, NextPage } from 'next'
-import Image from 'next/image'
-import Link from 'next/link'
-import { IoIosStarOutline } from 'react-icons/io'
-import { getCategories, getTopBrands } from './actions'
+import { Button } from "@/components/UI/Button";
+import { siteConfig } from "@/lib/siteConfig";
+import edjsHTML from "editorjs-html";
+import { Metadata, NextPage } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { IoIosStarOutline } from "react-icons/io";
+import { getCategories, getTopBrands } from "./actions";
 
-const edjsParser = edjsHTML()
+const edjsParser = edjsHTML();
 
 export const generateMetadata = async (): Promise<Metadata> => ({
-  title: 'Home' + ' | ' + siteConfig.name
-})
+  title: siteConfig.name,
+});
 
 const Home: NextPage = async () => {
   const [topBrands, categories] = await Promise.all([
     getTopBrands(),
-    getCategories()
-  ])
+    getCategories(),
+  ]);
 
   return (
     <>
@@ -29,8 +29,8 @@ const Home: NextPage = async () => {
             height={600}
             src="/Home/homepage.jpg"
             style={{
-              aspectRatio: '1200/600',
-              objectFit: 'cover'
+              aspectRatio: "1200/600",
+              objectFit: "cover",
             }}
             width={1200}
           />
@@ -54,10 +54,12 @@ const Home: NextPage = async () => {
           Trusted by individuals and teams at top companies worldwide
         </div>
 
-        <h2 className='font-semibold text-3xl text-center mt-8'>Our Premium Brands</h2>
+        <h2 className="font-semibold text-3xl text-center mt-8">
+          Our Premium Brands
+        </h2>
 
         <div className="grid grid-cols-2 px-8 sm:px-16 xl:px-32 items-center md:flex mt-8 justify-center gap-16">
-          {topBrands.map(brand => (
+          {topBrands.map((brand) => (
             <Link
               href={`/brands/${brand.slug}`}
               key={brand.id}
@@ -81,8 +83,8 @@ const Home: NextPage = async () => {
 
       <div className="block mt-32">
         {categories
-          .filter(c => c.resource)
-          .map(category => (
+          .filter((c) => c.resource)
+          .map((category) => (
             <div
               key={category.id}
               className={`px-4 md:px-16 gap-32 mb-32 flex flex-col md:flex-row justify-between`}
@@ -93,7 +95,7 @@ const Home: NextPage = async () => {
                     className="text-4xl relative pt-16 pb-2 font-semibold bg-gradient-radial "
                     style={{
                       backgroundImage:
-                        'linear-gradient(356deg, rgba(64, 0, 255, 0), #fff 42%)'
+                        "linear-gradient(356deg, rgba(64, 0, 255, 0), #fff 42%)",
                     }}
                   >
                     {category.name}
@@ -106,7 +108,7 @@ const Home: NextPage = async () => {
                       dangerouslySetInnerHTML={{
                         __html: edjsParser
                           .parse(category?.description as any)
-                          .join('')
+                          .join(""),
                       }}
                     />
                   ) : null}
@@ -136,8 +138,6 @@ const Home: NextPage = async () => {
             </div>
           ))}
       </div>
-
-      
 
       <div className="flex border mx-8 py-16 px-8 flex-col-reverse items-center gap-8 md:flex-row mt-32">
         <div className="md:w-1/2 flex flex-col gap-4">
@@ -239,7 +239,7 @@ const Home: NextPage = async () => {
               Just 3 simple steps to enhance your space with our windows.
             </div>
             <div className="font-semibold">
-              <Link href={'/contact'}>
+              <Link href={"/contact"}>
                 <Button>Contact us</Button>
               </Link>
             </div>
@@ -276,22 +276,22 @@ const Home: NextPage = async () => {
           {[
             {
               testimonial:
-                'Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.',
-              name: 'John Doe',
-              designation: 'Clients Project Manager'
+                "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
+              name: "John Doe",
+              designation: "Clients Project Manager",
             },
             {
               testimonial:
-                'Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.',
-              name: 'John Doe',
-              designation: 'Clients Project Manager'
+                "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
+              name: "John Doe",
+              designation: "Clients Project Manager",
             },
             {
               testimonial:
-                'Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.',
-              name: 'John Doe',
-              designation: 'Clients Project Manager'
-            }
+                "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
+              name: "John Doe",
+              designation: "Clients Project Manager",
+            },
           ].map((testimonial, i) => (
             <div
               className="bg-[#f0f0f0] sm:m-6 p-12 flex flex-col items-center"
@@ -339,7 +339,7 @@ const Home: NextPage = async () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
