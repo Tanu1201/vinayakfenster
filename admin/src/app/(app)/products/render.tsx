@@ -1,20 +1,21 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { FC } from 'react'
+import Link from "next/link";
+import { FC } from "react";
 
-import { DataTable } from '@/components/data-table/data-table'
-import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
-import { Heading } from '@/components/heading'
-import { Icons } from '@/components/icons'
-import { Shell } from '@/components/shell'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { formatDateTime, timesAgo } from '@/lib/formatDate'
-import { GetProductsFnDataType } from './actions'
+import { DataTable } from "@/components/data-table/data-table";
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import { Heading } from "@/components/heading";
+import { Icons } from "@/components/icons";
+import { Shell } from "@/components/shell";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { formatDateTime, timesAgo } from "@/lib/formatDate";
+import { GetProductsFnDataType } from "./actions";
+import Image from "next/image";
 
 export const Render: FC<{
-  data: GetProductsFnDataType
+  data: GetProductsFnDataType;
 }> = ({ data }) => {
   return (
     <Shell>
@@ -29,7 +30,24 @@ export const Render: FC<{
       <DataTable
         columns={[
           {
-            accessorKey: 'name',
+            accessorKey: "productImages",
+            header: ({ column }) => (
+              <DataTableColumnHeader column={column} title="Image" />
+            ),
+            cell: ({ row }) =>
+              row.original.productImages.length ? (
+                <Image
+                  src={row.original.productImages[0]?.url || ""}
+                  alt={row.original.name}
+                  width={50}
+                  height={50}
+                />
+              ) : (
+                <></>
+              ),
+          },
+          {
+            accessorKey: "name",
             header: ({ column }) => (
               <DataTableColumnHeader column={column} title="Name" />
             ),
@@ -40,16 +58,16 @@ export const Render: FC<{
               >
                 {row.original.name}
               </Link>
-            )
+            ),
           },
           {
-            accessorKey: 'brand',
+            accessorKey: "brand",
             header: ({ column }) => (
               <DataTableColumnHeader column={column} title="Brands" />
             ),
             cell: ({ row }) => (
               <div className="flex gap-1">
-                {row.original.productBrands.map(productBrand => (
+                {row.original.productBrands.map((productBrand) => (
                   <Link
                     key={productBrand.id}
                     className="underline underline-offset-4"
@@ -60,16 +78,16 @@ export const Render: FC<{
                 ))}
               </div>
             ),
-            enableSorting: false
+            enableSorting: false,
           },
           {
-            accessorKey: 'category',
+            accessorKey: "category",
             header: ({ column }) => (
               <DataTableColumnHeader column={column} title="Categories" />
             ),
             cell: ({ row }) => (
               <div className="flex gap-1">
-                {row.original.productCategories.map(productCategory => (
+                {row.original.productCategories.map((productCategory) => (
                   <Link
                     key={productCategory.id}
                     className="underline underline-offset-4"
@@ -80,32 +98,32 @@ export const Render: FC<{
                 ))}
               </div>
             ),
-            enableSorting: false
+            enableSorting: false,
           },
           {
-            accessorKey: 'createdAt',
+            accessorKey: "createdAt",
             header: ({ column }) => (
               <DataTableColumnHeader column={column} title="Created At" />
             ),
-            cell: ({ row }) => formatDateTime(row.original.createdAt)
+            cell: ({ row }) => formatDateTime(row.original.createdAt),
           },
           {
-            accessorKey: 'updatedAt',
+            accessorKey: "updatedAt",
             header: ({ column }) => (
               <DataTableColumnHeader column={column} title="Updated At" />
             ),
-            cell: ({ row }) => timesAgo(row.original.updatedAt)
-          }
+            cell: ({ row }) => timesAgo(row.original.updatedAt),
+          },
         ]}
         data={data.products}
         total={data.total}
         searchableColumns={[
           {
-            id: 'name',
-            title: 'Name'
-          }
+            id: "name",
+            title: "Name",
+          },
         ]}
       />
     </Shell>
-  )
-}
+  );
+};
