@@ -1,13 +1,13 @@
-import { siteConfig } from '@/lib/siteConfig'
-import { Metadata, NextPage } from 'next'
-import Link from 'next/link'
-import { AiOutlineClockCircle } from 'react-icons/ai'
-import { IoLocationOutline, IoMailOutline } from 'react-icons/io5'
-import { MdOutlineLocalPhone } from 'react-icons/md'
-import { ContactForm } from './components/ContactForm'
+import { siteConfig } from "@/lib/siteConfig"
+import { Metadata, NextPage } from "next"
+import Link from "next/link"
+import { AiOutlineClockCircle } from "react-icons/ai"
+import { IoLocationOutline, IoMailOutline } from "react-icons/io5"
+import { MdOutlineLocalPhone } from "react-icons/md"
+import { ContactForm } from "./components/ContactForm"
 
 export const generateMetadata = (): Metadata => ({
-  title: 'Contact' + ' | ' + siteConfig.name
+  title: "Contact" + " | " + siteConfig.name,
 })
 
 const Contact: NextPage = () => {
@@ -49,8 +49,8 @@ const Contact: NextPage = () => {
               target="_blank"
               className="w-4/5"
             >
-              6, Baneda Castel, behind Mundra Elite, Meera Nagar, Udaipur,
-              Rajasthan (313001)
+              6, Vinayak fenster Systems, Behind Mundra Elite, 100.ft.
+              Shobhagpura Road, Udaipur (313001)
             </Link>
           </div>
           <div className="flex gap-4">

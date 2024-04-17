@@ -1,5 +1,5 @@
-import Link from 'next/link'
-import { FC } from 'react'
+import Link from "next/link"
+import { FC } from "react"
 
 export const Footer: FC = () => {
   return (
@@ -15,35 +15,34 @@ export const Footer: FC = () => {
         </div>
         <ul className="md:w-1/4 flex flex-col gap-4">
           <li>
-            <Link href="/products">Products</Link>
-          </li>
-          <li>
             <Link href="/about">About us</Link>
           </li>
           <li>
             <Link href="/contact">Contact</Link>
+          </li>
+          <li>
+            <Link href="/portfolio">Portfolio</Link>
           </li>
         </ul>
         <ul className="md:w-1/4 flex flex-col gap-4">
           <li>
-            <Link href="/products">Products</Link>
+            <Link href="/brands">Brands</Link>
           </li>
+
           <li>
-            <Link href="/about">About us</Link>
+            <Link href="https://www.facebook.com/vinayakfenster/">
+              Facebook
+            </Link>
           </li>
-          <li>
-            <Link href="/contact">Contact</Link>
-          </li>
-        </ul>{' '}
+        </ul>
         <ul className="md:w-1/4 flex flex-col gap-4">
           <li>
-            <Link href="/products">Products</Link>
+            <Link href="https://www.instagram.com/vinayakfenster/">
+              Instagram
+            </Link>
           </li>
           <li>
-            <Link href="/about">About us</Link>
-          </li>
-          <li>
-            <Link href="/contact">Contact</Link>
+            <Link href="tel:+91-9928288523">Call Us: +91-9928288523</Link>
           </li>
         </ul>
       </div>

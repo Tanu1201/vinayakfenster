@@ -1,52 +1,31 @@
-import { Button } from "@/components/UI/Button";
-import { siteConfig } from "@/lib/siteConfig";
-import edjsHTML from "editorjs-html";
-import { Metadata, NextPage } from "next";
-import Image from "next/image";
-import Link from "next/link";
-import { IoIosStarOutline } from "react-icons/io";
-import { getCategories, getTopBrands } from "./actions";
+import { Button } from "@/components/UI/Button"
+import { siteConfig } from "@/lib/siteConfig"
+import edjsHTML from "editorjs-html"
+import { Metadata, NextPage } from "next"
+import Image from "next/image"
+import Link from "next/link"
+import { IoIosStarOutline } from "react-icons/io"
+import { getCategories, getTopBrands, getTopTestimonials } from "./actions"
+import "swiper/css"
+import { HomeBanner } from "@/components/HomeBanner"
 
-const edjsParser = edjsHTML();
+const edjsParser = edjsHTML()
 
 export const generateMetadata = async (): Promise<Metadata> => ({
   title: siteConfig.name,
-});
+})
 
 const Home: NextPage = async () => {
-  const [topBrands, categories] = await Promise.all([
+  const [topBrands, categories, testimonials] = await Promise.all([
     getTopBrands(),
     getCategories(),
-  ]);
+    getTopTestimonials(),
+  ])
 
   return (
     <>
       <div className="flex  flex-col-reverse md:items-center gap-8 md:flex-row">
-        <div className="relative h-[600px] px-4 lg:px-16 w-full overflow-hidden">
-          <Image
-            alt="Beautiful room with fensters, windows, and curtains"
-            className="absolute inset-0 object-cover w-full h-full"
-            height={600}
-            src="/Home/homepage.jpg"
-            style={{
-              aspectRatio: "1200/600",
-              objectFit: "cover",
-            }}
-            width={1200}
-          />
-          <div className="absolute inset-0 bg-black/40" />
-          <div className="relative z-10 flex flex-col w-1/2 space-y-4 justify-center h-full px-4 text-white">
-            <h1 className="font-semibold leading-tight text-5xl md:text-7xl">
-              The Perfect way to showcase
-            </h1>
-            <span className="text-lg">
-              Here you can find the best window solutions for your project.
-            </span>
-            <Link href="/portfolio" className="font-semibold mt-2">
-              <Button white>Learn More</Button>
-            </Link>
-          </div>
-        </div>
+        <HomeBanner />
       </div>
 
       <div className="mt-16">
@@ -166,7 +145,7 @@ const Home: NextPage = async () => {
 
       <div className="h-4 bg-[#f0f0f0] mx-80" />
 
-      <div className="flex px-4 lg:px-16 flex-col md:items-center gap-8 md:flex-row mt-32">
+      {/* <div className="flex px-4 lg:px-16 flex-col md:items-center gap-8 md:flex-row mt-32">
         <div className="w-full md:w-1/2 relative px-8 sm:px-16 xl:px-32">
           <Image
             src="/Home/hero3.png"
@@ -190,21 +169,20 @@ const Home: NextPage = async () => {
             <Button>Learn More</Button>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="flex px-4 lg:px-16 flex-col-reverse items-center gap-8 md:flex-row mt-32">
         <div className="w-full md:w-1/2 flex flex-col gap-4">
           <h1 className="font-semibold leading-tight text-5xl">
-            Cost-effective window solutions
+            Discover our Portfolio
           </h1>
           <span className="leading-tight">
-            Powerful tools that help you save money without compromising on
-            quality. With our diverse range of window solutions and expert
-            advice, you can optimize your window projects and achieve cost
-            savings.
+            Explore Our Diverse Portfolio of Projects and Offerings
           </span>
           <div className="font-semibold mt-2">
-            <Button>Discover More</Button>
+            <Link href={"/portfolio"}>
+              <Button>Discover Portfolio</Button>
+            </Link>
           </div>
         </div>
         <div className="w-full md:w-1/2 relative px-8 md:px-16 xl:px-32">
@@ -273,43 +251,42 @@ const Home: NextPage = async () => {
         <h2 className="font-medium text-5xl">Client Testimonials</h2>
         <div className="mt-4">Explore our diverse client projects</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 xl:gap-24 mt-12">
-          {[
-            {
-              testimonial:
-                "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
-              name: "John Doe",
-              designation: "Clients Project Manager",
-            },
-            {
-              testimonial:
-                "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
-              name: "John Doe",
-              designation: "Clients Project Manager",
-            },
-            {
-              testimonial:
-                "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
-              name: "John Doe",
-              designation: "Clients Project Manager",
-            },
-          ].map((testimonial, i) => (
+          {(testimonials.length
+            ? testimonials
+            : [
+                {
+                  description:
+                    "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
+                  name: "John Doe",
+                  starRating: 5,
+                },
+                {
+                  description:
+                    "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
+                  name: "John Doe",
+                  starRating: 4,
+                },
+                {
+                  description:
+                    "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
+                  name: "John Doe",
+                  starRating: 5,
+                },
+              ]
+          ).map((testimonial, i) => (
             <div
               className="bg-[#f0f0f0] sm:m-6 p-12 flex flex-col items-center"
               key={i}
             >
               <span className="text-base font-medium">
-                Since installing Vinayak Fenster Systems, our clients have been
-                {testimonial.testimonial}
+                &quot; {testimonial.description}&quot;
               </span>
               <div className="flex mt-4 gap-4">
-                <IoIosStarOutline />
-                <IoIosStarOutline />
-                <IoIosStarOutline />
-                <IoIosStarOutline />
-                <IoIosStarOutline />
+                {Array.from(Array(testimonial.starRating).keys()).map((i) => (
+                  <IoIosStarOutline key={i} />
+                ))}
               </div>
               <span className="font-medium mt-4">{testimonial.name}</span>
-              <span className="text-sm mt-2">{testimonial.designation}</span>
             </div>
           ))}
         </div>
@@ -339,7 +316,7 @@ const Home: NextPage = async () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
