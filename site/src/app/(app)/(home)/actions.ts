@@ -1,36 +1,37 @@
-'use server'
+"use server"
 
-import { prisma } from '@/lib/db'
+import { prisma } from "@/lib/db"
 
 export const getTopBrands = async () => {
   return await prisma.brand.findMany({
     where: {
-      isTopBrand: true
+      isTopBrand: true,
     },
     include: {
-      resource: true
-    }
+      resource: true,
+    },
   })
 }
 
 export const getTopTestimonials = async () => {
   return await prisma.testimonial.findMany({
     where: {
-      isTopTestimonial: true
+      isTopTestimonial: true,
     },
     include: {
-      resource: true
-    }
+      resource: true,
+    },
   })
 }
 
 export const getCategories = async () => {
   return await prisma.category.findMany({
     include: {
-      resource: true
+      resource: true,
     },
     orderBy: {
-      order: 'asc'
-    }
+      order: "asc",
+    },
+    take: 5,
   })
 }
