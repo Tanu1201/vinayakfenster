@@ -49,8 +49,7 @@ const Contact: NextPage = () => {
               target="_blank"
               className="w-4/5"
             >
-              6, Vinayak fenster Systems, Behind Mundra Elite, 100.ft.
-              Shobhagpura Road, Udaipur (313001)
+              6, Behind Mundra Elite, Meera Nagar, 100ft. Road Shobhagpura, Udaipur
             </Link>
           </div>
           <div className="flex gap-4">
