@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { FC, useState } from 'react'
 import 'swiper/css'
 import 'swiper/css/navigation'
-import { Navigation } from 'swiper/modules'
+import { Autoplay, Navigation } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { GetPortfolioFnDatatype } from './action'
 
@@ -107,7 +107,10 @@ export const Render: FC<{ portfolios: GetPortfolioFnDatatype }> = ({
           {/* <div> */}
           <Swiper
             navigation={true}
-            modules={[Navigation]}
+            modules={[Navigation, Autoplay]}
+            autoplay
+            loop
+            speed={500}
             className="max-h-screen"
           >
             {selectedPortflio.portfolioImages.map(img => (
