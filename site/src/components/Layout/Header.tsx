@@ -28,6 +28,9 @@ const navLinks = [
   {
     title: 'Brands',
     url: '/brands'
+  }, {
+    title: 'Products',
+    url: '/products'
   }
 ]
 
@@ -49,11 +52,12 @@ export const Header: FC = () => {
   }, [phoneMenuOpen])
 
   return (
-    <header className="lg:px-16 px-4 sm:py-4 fixed w-full z-50 flex justify-between md:justify-normal items-center bg-white border-b border-[#f0f0f0]">
-      <Link href={'/'} className="h-20 w-40 relative">
+    <header className="lg:px-16   px-4 sm:py-4 fixed w-full z-50 flex bg-opacity-50 justify-between  items-center bg-white border-b border-[#f0f0f0]">
+
+      <Link href={'/'} className="h-16 w-40  relative">
         <Image src="/Header Logo.png" alt="Logo" fill objectFit="contain" />
       </Link>
-      <ul className="gap-8 font-medium text-base ml-16 hidden md:flex">
+      <ul className="gap-10  font-semibold text-base ml-16 hidden md:flex">
         <li>
           <Link href="/about">About</Link>
         </li>
@@ -65,6 +69,9 @@ export const Header: FC = () => {
         </li>
         <li>
           <Link href="/brands">Brands</Link>
+        </li>
+        <li>
+          <Link href="/products">Products</Link>
         </li>
       </ul>
       <HiOutlineMenuAlt3
@@ -103,11 +110,10 @@ export const Header: FC = () => {
               {navLinks.map((item, i) => (
                 <li
                   key={i}
-                  className={`relative text-2xl font-bold px-4 py-4 animated  text-right hover:text-secondary ${
-                    checkRoute(currRoute, item.url)
-                      ? 'text-secondary'
-                      : 'text-gray-800'
-                  }`}
+                  className={`relative text-2xl font-bold px-4 py-4 animated  text-right hover:text-secondary ${checkRoute(currRoute, item.url)
+                    ? 'text-secondary'
+                    : 'text-gray-800'
+                    }`}
                 >
                   <Link
                     href={item.url}

@@ -8,6 +8,7 @@ import { IoIosStarOutline } from "react-icons/io"
 import { getCategories, getTopBrands, getTopTestimonials } from "./actions"
 import "swiper/css"
 import { HomeBanner } from "@/components/HomeBanner"
+import HomePageBannner from "@/components/HomePageBannner"
 
 const edjsParser = edjsHTML()
 
@@ -21,11 +22,13 @@ const Home: NextPage = async () => {
     getCategories(),
     getTopTestimonials(),
   ])
+  console.log(topBrands, categories, testimonials, "hello world")
 
   return (
     <>
       <div className="flex  flex-col-reverse md:items-center gap-8 md:flex-row">
-        <HomeBanner />
+        {/* <HomeBanner /> */}
+        <HomePageBannner />
       </div>
 
       <div className="mt-16">
@@ -254,25 +257,25 @@ const Home: NextPage = async () => {
           {(testimonials.length
             ? testimonials
             : [
-                {
-                  description:
-                    "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
-                  name: "John Doe",
-                  starRating: 5,
-                },
-                {
-                  description:
-                    "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
-                  name: "John Doe",
-                  starRating: 4,
-                },
-                {
-                  description:
-                    "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
-                  name: "John Doe",
-                  starRating: 5,
-                },
-              ]
+              {
+                description:
+                  "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
+                name: "John Doe",
+                starRating: 5,
+              },
+              {
+                description:
+                  "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
+                name: "John Doe",
+                starRating: 4,
+              },
+              {
+                description:
+                  "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
+                name: "John Doe",
+                starRating: 5,
+              },
+            ]
           ).map((testimonial, i) => (
             <div
               className="bg-[#f0f0f0] sm:m-6 p-12 flex flex-col items-center"
