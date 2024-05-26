@@ -9,6 +9,7 @@ import { getCategories, getTopBrands, getTopTestimonials } from "./actions";
 import "swiper/css";
 import HomePageBannner from "@/components/HomePageBannner";
 import { HomeBanner } from "@/components/HomeBanner";
+import { url } from "inspector";
 
 const edjsParser = edjsHTML();
 
@@ -53,20 +54,19 @@ const Home: NextPage = async () => {
     getCategories(),
     getTopTestimonials(),
   ]);
-  console.log(topBrands, categories, testimonials, "hello world");
 
   return (
     <>
       <div className=" md:items-center gap-8 mb-20 md:flex-row">
         <HomeBanner />
       </div>
-      <div className="rounded-full bg-[#4E7DA9] h-[500px] w-[500px]   absolute -left-24 -top-56"></div>
+      {/* <div className="rounded-full bg-[#4E7DA9] h-[500px] w-[500px]   absolute -left-24 -top-56"></div>
       <div className="rounded-full bg-[#299BB1] h-[400px] w-[400px] top-[45%] -z-20  flex items-center justify-center absolute -right-52 ">
         <div className="rounded-full bg-white h-[220px] w-[220px] "></div>
-      </div>
+      </div> */}
 
       <div>
-        <div className="text-center font-semibold text-lg mb-20">
+        <div className="text-center font-semibold text-2xl mb-20">
           Discover Our Range of Fensters, Windows, and Aluminium Frames{" "}
         </div>
         <div className="flex justify-evenly my-10">
@@ -76,13 +76,19 @@ const Home: NextPage = async () => {
                 key={i}
                 src={img.url}
                 alt={img.text}
-                className="h-[250px] w-[350px] rounded-xl shadow-xl"
+                className="h-[250px] w-[350px] cursor-pointer rounded-xl shadow-xl hover:scale-105 transition-all duration-500 ease-in-out"
                 width={1000}
                 height={1000}
               />
             );
           })}
         </div>
+      </div>
+      <div className="w-full my-48 h-48 bg-cover relative bgimage">
+        <h1 className="text-white text-4xl font-semibold text-center w-[60%]">
+          Elevate your space with bespoke Fensters, Windows, and Aluminium
+          Frames - where elegance meets functionality seamlessly.{" "}
+        </h1>
       </div>
       <HomePageBannner />
 
@@ -113,19 +119,20 @@ const Home: NextPage = async () => {
           ))}
         </div>
       </div>
-
       <div className="block mt-32">
         {categories
           .filter((c) => c.resource)
-          .map((category) => (
+          .map((category, index) => (
             <div
               key={category.id}
-              className={`px-4 md:px-16 gap-32 mb-32 flex flex-col md:flex-row justify-between`}
+              className={`px-4 md:px-16 gap-32 mb-32 flex flex-col md:flex-row justify-between ${
+                index % 2 === 0 ? "even-category" : "odd-category"
+              }`}
             >
               <div className="md:w-1/2 flex flex-col gap-8">
                 <div className="sticky top-16 ">
                   <h3
-                    className="text-4xl relative pt-16 pb-2 font-semibold bg-gradient-radial "
+                    className="text-4xl relative pt-16 pb-2 font-semibold bg-gradient-radial"
                     style={{
                       backgroundImage:
                         "linear-gradient(356deg, rgba(64, 0, 255, 0), #fff 42%)",
@@ -171,6 +178,34 @@ const Home: NextPage = async () => {
             </div>
           ))}
       </div>
+
+      <div className="mt-32 block">
+        <h2 className="font-semibold text-3xl text-center mt-8">
+          Our Categories
+        </h2>
+        <div className="grid grid-cols-2 px-8 sm:px-16 xl:px-32 items-center md:flex mt-8 justify-center gap-16">
+          {categories.map((category) => (
+            <Link
+              href={`/categories/${category.slug}`}
+              key={category.id}
+              className="flex flex-col items-center gap-2"
+            >
+              <div key={category.id}>
+                {category.resource ? (
+                  <Image
+                    src={category.resource?.url}
+                    alt=""
+                    height={200}
+                    width={200}
+                  />
+                ) : null}
+              </div>
+              <div className="text-sm">{category.name}</div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
       <button className="border border-black py-3 px-9 text-xl block mx-auto transition-colors duration-700 ease-in-out hover:bg-black hover:text-white">
         Explore More
       </button>

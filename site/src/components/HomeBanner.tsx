@@ -8,28 +8,28 @@ import { Button } from "./UI/Button";
 
 const images = [
   {
-    url: "/Home/banner/1.jpg",
+    url: "/Home/banner/5.jpeg",
     heading: "The Perfect way to showcase",
     text: "Here you can find the best window solutions for your project.",
     buttonText: "Learn More",
     buttonLink: "/portfolio",
   },
   {
-    url: "/Home/banner/3.jpg",
+    url: "/Home/banner/6.jpeg",
     heading: "The Perfect way to showcase",
     text: "Here you can find the best window solutions for your project.",
     buttonText: "Learn More",
     buttonLink: "/portfolio",
   },
   {
-    url: "/Home/banner/4.jpg",
+    url: "/Home/banner/7.jpeg",
     heading: "The Perfect way to showcase",
     text: "Here you can find the best window solutions for your project.",
     buttonText: "Learn More",
     buttonLink: "/portfolio",
   },
   {
-    url: "/Home/banner/2.jpg",
+    url: "/Home/banner/8.webp",
     heading: "The Perfect way to showcase",
     text: "Here you can find the best window solutions for your project.",
     buttonText: "Learn More",
@@ -53,17 +53,19 @@ export const HomeBanner = () => {
           key={i}
           className="h-full -z-10 w-full swiper-button-white"
         >
-          <div className="relative h-[600px] px-4 lg:px-16 w-full overflow-hidden">
+          <div className="relative h-[700px] px-4 lg:px-16 w-full overflow-hidden">
             <Image
               alt="Beautiful room with fensters, windows, and curtains"
-              className="absolute inset-0 object-cover w-full h-full"
+              className="absolute inset-0  w-full h-full"
               height={1200}
+              // layout="fill"
+              objectFit="cover"
               src={img.url}
               style={{
                 aspectRatio: "1200/600",
                 objectFit: "cover",
               }}
-              width={1200}
+              width={2000}
             />
             {img.heading ? (
               <div className="absolute inset-0 bg-black/40" />

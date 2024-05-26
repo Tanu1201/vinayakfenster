@@ -17,3 +17,23 @@
     @apply m-0 p-0;
   }
 }
+.bgimage {
+  background-image: url('../../public/parallax.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 50vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  /* Parallax effect */
+  background-attachment: fixed;
+}
+
+body{
+  scroll-behavior: smooth;
+}
