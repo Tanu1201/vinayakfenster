@@ -1,41 +1,92 @@
-import { Button } from "@/components/UI/Button"
-import { siteConfig } from "@/lib/siteConfig"
-import edjsHTML from "editorjs-html"
-import { Metadata, NextPage } from "next"
-import Image from "next/image"
-import Link from "next/link"
-import { IoIosStarOutline } from "react-icons/io"
-import { getCategories, getTopBrands, getTopTestimonials } from "./actions"
-import "swiper/css"
-import { HomeBanner } from "@/components/HomeBanner"
-import HomePageBannner from "@/components/HomePageBannner"
+import { Button } from "@/components/UI/Button";
+import { siteConfig } from "@/lib/siteConfig";
+import edjsHTML from "editorjs-html";
+import { Metadata, NextPage } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { IoIosArrowDropright, IoIosStarOutline } from "react-icons/io";
+import { getCategories, getTopBrands, getTopTestimonials } from "./actions";
+import "swiper/css";
+import HomePageBannner from "@/components/HomePageBannner";
+import { HomeBanner } from "@/components/HomeBanner";
 
-const edjsParser = edjsHTML()
+const edjsParser = edjsHTML();
 
 export const generateMetadata = async (): Promise<Metadata> => ({
   title: siteConfig.name,
-})
+});
+
+const images = [
+  {
+    url: "/Home/banner/1.jpg",
+    heading: "The Perfect way to showcase",
+    text: "Here you can find the best window solutions for your project.",
+    buttonText: "Learn More",
+    buttonLink: "/portfolio",
+  },
+  {
+    url: "/Home/banner/3.jpg",
+    heading: "The Perfect way to showcase",
+    text: "Here you can find the best window solutions for your project.",
+    buttonText: "Learn More",
+    buttonLink: "/portfolio",
+  },
+  {
+    url: "/Home/banner/4.jpg",
+    heading: "The Perfect way to showcase",
+    text: "Here you can find the best window solutions for your project.",
+    buttonText: "Learn More",
+    buttonLink: "/portfolio",
+  },
+  {
+    url: "/Home/banner/2.jpg",
+    heading: "The Perfect way to showcase",
+    text: "Here you can find the best window solutions for your project.",
+    buttonText: "Learn More",
+    buttonLink: "/portfolio",
+  },
+];
 
 const Home: NextPage = async () => {
   const [topBrands, categories, testimonials] = await Promise.all([
     getTopBrands(),
     getCategories(),
     getTopTestimonials(),
-  ])
-  console.log(topBrands, categories, testimonials, "hello world")
+  ]);
+  console.log(topBrands, categories, testimonials, "hello world");
 
   return (
     <>
-      <div className="flex  flex-col-reverse md:items-center gap-8 md:flex-row">
-        {/* <HomeBanner /> */}
-        <HomePageBannner />
+      <div className=" md:items-center gap-8 mb-20 md:flex-row">
+        <HomeBanner />
+      </div>
+      <div className="rounded-full bg-[#4E7DA9] h-[500px] w-[500px]   absolute -left-24 -top-56"></div>
+      <div className="rounded-full bg-[#299BB1] h-[400px] w-[400px] top-[45%] -z-20  flex items-center justify-center absolute -right-52 ">
+        <div className="rounded-full bg-white h-[220px] w-[220px] "></div>
       </div>
 
-      <div className="mt-16">
-        <div className="text-center font-semibold text-lg">
-          Trusted by individuals and teams at top companies worldwide
+      <div>
+        <div className="text-center font-semibold text-lg mb-20">
+          Discover Our Range of Fensters, Windows, and Aluminium Frames{" "}
         </div>
+        <div className="flex justify-evenly my-10">
+          {images.map((img, i) => {
+            return (
+              <Image
+                key={i}
+                src={img.url}
+                alt={img.text}
+                className="h-[250px] w-[350px] rounded-xl shadow-xl"
+                width={1000}
+                height={1000}
+              />
+            );
+          })}
+        </div>
+      </div>
+      <HomePageBannner />
 
+      <div className="mt-16">
         <h2 className="font-semibold text-3xl text-center mt-8">
           Our Premium Brands
         </h2>
@@ -109,8 +160,8 @@ const Home: NextPage = async () => {
                   src={category.resource!.url}
                   alt=""
                   className="shadow-2xl rounded-xl group-hover:scale-105 transition-all duration-500 ease-in-out"
-                  height={1000}
-                  width={1000}
+                  height={2000}
+                  width={2000}
                 />
                 <div className="absolute inset-0 rounded-xl group-hover:scale-105 group-hover:bg-black/40 transition-all duration-500 ease-in-out" />
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white hidden group-hover:block">
@@ -120,6 +171,9 @@ const Home: NextPage = async () => {
             </div>
           ))}
       </div>
+      <button className="border border-black py-3 px-9 text-xl block mx-auto transition-colors duration-700 ease-in-out hover:bg-black hover:text-white">
+        Explore More
+      </button>
 
       <div className="flex border mx-8 py-16 px-8 flex-col-reverse items-center gap-8 md:flex-row mt-32">
         <div className="md:w-1/2 flex flex-col gap-4">
@@ -257,25 +311,25 @@ const Home: NextPage = async () => {
           {(testimonials.length
             ? testimonials
             : [
-              {
-                description:
-                  "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
-                name: "John Doe",
-                starRating: 5,
-              },
-              {
-                description:
-                  "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
-                name: "John Doe",
-                starRating: 4,
-              },
-              {
-                description:
-                  "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
-                name: "John Doe",
-                starRating: 5,
-              },
-            ]
+                {
+                  description:
+                    "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
+                  name: "John Doe",
+                  starRating: 5,
+                },
+                {
+                  description:
+                    "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
+                  name: "John Doe",
+                  starRating: 4,
+                },
+                {
+                  description:
+                    "Since installing Vinayak Fenster Systems, our clients have been thrilled with the results.",
+                  name: "John Doe",
+                  starRating: 5,
+                },
+              ]
           ).map((testimonial, i) => (
             <div
               className="bg-[#f0f0f0] sm:m-6 p-12 flex flex-col items-center"
@@ -319,7 +373,7 @@ const Home: NextPage = async () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

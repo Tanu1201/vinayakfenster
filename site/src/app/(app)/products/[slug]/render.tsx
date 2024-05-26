@@ -1,16 +1,16 @@
-'use client'
+"use client";
 
-import edjsHTML from 'editorjs-html'
-import Error from 'next/error'
-import Image from 'next/image'
-import Link from 'next/link'
-import { FC, useState } from 'react'
-import { GetProductFnDataType } from './action'
+import edjsHTML from "editorjs-html";
+import Error from "next/error";
+import Image from "next/image";
+import Link from "next/link";
+import { FC, useState } from "react";
+import { GetProductFnDataType } from "./action";
 
-const edjsParser = edjsHTML()
+const edjsParser = edjsHTML();
 
 export const Render: FC<{ product: GetProductFnDataType }> = ({ product }) => {
-  const [image, setImage] = useState(product?.productImages?.[0]?.url)
+  const [image, setImage] = useState(product?.productImages?.[0]?.url);
 
   return product ? (
     <div>
@@ -25,7 +25,7 @@ export const Render: FC<{ product: GetProductFnDataType }> = ({ product }) => {
                   className="border hover:border-gray-900 rounded-lg overflow-hidden transition-colors dark:hover:border-gray-50"
                 >
                   <Image
-                    alt={'Product Image ' + i}
+                    alt={"Product Image " + i}
                     src={img.url}
                     width={600}
                     height={900}
@@ -37,8 +37,8 @@ export const Render: FC<{ product: GetProductFnDataType }> = ({ product }) => {
           ) : null}
           <div className="md:col-span-4">
             <Image
-              alt={'Product Image'}
-              src={image || '/placeholder.svg'}
+              alt={"Product Image"}
+              src={image || "/placeholder.svg"}
               width={600}
               height={900}
             />
@@ -50,7 +50,7 @@ export const Render: FC<{ product: GetProductFnDataType }> = ({ product }) => {
             {/* categories */}
             <h3 className="text-xl font-semibold text-gray-800">Categories</h3>
             <div className="">
-              {product.productCategories.map(category => (
+              {product.productCategories.map((category) => (
                 <Link
                   key={category.category.id}
                   href={`/categories/${category.category.slug}`}
@@ -63,7 +63,7 @@ export const Render: FC<{ product: GetProductFnDataType }> = ({ product }) => {
             {/* brands */}
             <h3 className="text-xl font-semibold text-gray-800">Brands</h3>
             <div>
-              {product.productBrands.map(brand => (
+              {product.productBrands.map((brand) => (
                 <Link
                   key={brand.brand.id}
                   href={`/brands/${brand.brand.slug}`}
@@ -80,7 +80,7 @@ export const Render: FC<{ product: GetProductFnDataType }> = ({ product }) => {
                   dangerouslySetInnerHTML={{
                     __html: edjsParser
                       .parse(product?.description as any)
-                      .join('')
+                      .join(""),
                   }}
                 />
               ) : null}
@@ -91,5 +91,5 @@ export const Render: FC<{ product: GetProductFnDataType }> = ({ product }) => {
     </div>
   ) : (
     <Error statusCode={404} withDarkMode={false} />
-  )
-}
+  );
+};

@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { Autoplay, Navigation } from "swiper/modules"
-import { Swiper, SwiperSlide } from "swiper/react"
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "./UI/Button"
+import { Autoplay, Navigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "./UI/Button";
 
 const images = [
   {
@@ -35,13 +35,13 @@ const images = [
     buttonText: "Learn More",
     buttonLink: "/portfolio",
   },
-]
+];
 
 export const HomeBanner = () => {
   return (
     <Swiper
       modules={[Navigation, Autoplay]}
-      className="w-full h-full"
+      className="w-full h-full "
       navigation
       autoplay
       loop
@@ -49,12 +49,15 @@ export const HomeBanner = () => {
       centeredSlides
     >
       {images.map((img, i) => (
-        <SwiperSlide key={i} className="h-full w-full">
+        <SwiperSlide
+          key={i}
+          className="h-full -z-10 w-full swiper-button-white"
+        >
           <div className="relative h-[600px] px-4 lg:px-16 w-full overflow-hidden">
             <Image
               alt="Beautiful room with fensters, windows, and curtains"
               className="absolute inset-0 object-cover w-full h-full"
-              height={600}
+              height={1200}
               src={img.url}
               style={{
                 aspectRatio: "1200/600",
@@ -82,5 +85,5 @@ export const HomeBanner = () => {
         </SwiperSlide>
       ))}
     </Swiper>
-  )
-}
+  );
+};
