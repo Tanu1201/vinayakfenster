@@ -69,7 +69,7 @@ const Home: NextPage = async () => {
         <div className="text-center font-semibold text-2xl mb-20">
           Discover Our Range of Fensters, Windows, and Aluminium Frames{" "}
         </div>
-        <div className="flex justify-evenly my-10">
+        <div className="flex justify-evenly my-10 flex-wrap gap-5  ">
           {images.map((img, i) => {
             return (
               <Image
@@ -85,7 +85,7 @@ const Home: NextPage = async () => {
         </div>
       </div>
       <div className="w-full my-48 h-48 bg-cover relative bgimage">
-        <h1 className="text-white text-4xl font-semibold text-center w-[60%]">
+        <h1 className="text-white text-lg  md:text-2xl lg:text-4xl font-semibold text-center w-[60%]">
           Elevate your space with bespoke Fensters, Windows, and Aluminium
           Frames - where elegance meets functionality seamlessly.{" "}
         </h1>
@@ -119,96 +119,38 @@ const Home: NextPage = async () => {
           ))}
         </div>
       </div>
-      <div className="block mt-32">
-        {categories
-          .filter((c) => c.resource)
-          .map((category, index) => (
-            <div
-              key={category.id}
-              className={`px-4 md:px-16 gap-32 mb-32 flex flex-col md:flex-row justify-between ${
-                index % 2 === 0 ? "even-category" : "odd-category"
-              }`}
-            >
-              <div className="md:w-1/2 flex flex-col gap-8">
-                <div className="sticky top-16 ">
-                  <h3
-                    className="text-4xl relative pt-16 pb-2 font-semibold bg-gradient-radial"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(356deg, rgba(64, 0, 255, 0), #fff 42%)",
-                    }}
-                  >
-                    {category.name}
-                  </h3>
-                </div>
-                <div className="">
-                  {category.description ? (
-                    <article
-                      className="prose"
-                      dangerouslySetInnerHTML={{
-                        __html: edjsParser
-                          .parse(category?.description as any)
-                          .join(""),
-                      }}
-                    />
-                  ) : null}
-                </div>
-                <div>
-                  <Link href={`/categories/${category.slug}`}>
-                    <Button>See Products</Button>
-                  </Link>
-                </div>
-              </div>
-              <Link
-                href={`/categories/${category.slug}`}
-                className="relative md:w-1/2 group"
-              >
-                <Image
-                  src={category.resource!.url}
-                  alt=""
-                  className="shadow-2xl rounded-xl group-hover:scale-105 transition-all duration-500 ease-in-out"
-                  height={2000}
-                  width={2000}
-                />
-                <div className="absolute inset-0 rounded-xl group-hover:scale-105 group-hover:bg-black/40 transition-all duration-500 ease-in-out" />
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white hidden group-hover:block">
-                  <Button white>See Products</Button>
-                </div>
-              </Link>
-            </div>
-          ))}
-      </div>
-
       <div className="mt-32 block">
         <h2 className="font-semibold text-3xl text-center mt-8">
           Our Categories
         </h2>
-        <div className="grid grid-cols-2 px-8 sm:px-16 xl:px-32 items-center md:flex mt-8 justify-center gap-16">
+        <div className="grid grid-cols-1 mt-10 md:grid-cols-2 gap-8 px-4 sm:px-8 xl:px-32 items-center justify-center mb-10">
           {categories.map((category) => (
             <Link
               href={`/categories/${category.slug}`}
               key={category.id}
-              className="flex flex-col items-center gap-2"
+              className="flex flex-col items-center gap-2 bg-white rounded shadow-md hover:shadow-lg transition duration-300 ease-in-out"
             >
               <div key={category.id}>
                 {category.resource ? (
                   <Image
+                    className="w-full h-[250px] md:h-auto object-cover"
                     src={category.resource?.url}
+                    width={500}
+                    height={500}
                     alt=""
-                    height={200}
-                    width={200}
                   />
                 ) : null}
               </div>
-              <div className="text-sm">{category.name}</div>
+              <div className="text-sm font-medium px-4 py-2">
+                {category.name}
+              </div>
             </Link>
           ))}
         </div>
+        <button className="border border-black py-3 px-9 text-xl block mx-auto transition-colors duration-700 ease-in-out hover:bg-black hover:text-white">
+          Explore More
+        </button>
       </div>
-
-      <button className="border border-black py-3 px-9 text-xl block mx-auto transition-colors duration-700 ease-in-out hover:bg-black hover:text-white">
-        Explore More
-      </button>
 
       <div className="flex border mx-8 py-16 px-8 flex-col-reverse items-center gap-8 md:flex-row mt-32">
         <div className="md:w-1/2 flex flex-col gap-4">
