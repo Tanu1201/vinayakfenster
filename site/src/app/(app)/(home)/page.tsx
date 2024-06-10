@@ -9,7 +9,7 @@ import { getCategories, getTopBrands, getTopTestimonials } from "./actions";
 import "swiper/css";
 import HomePageBannner from "@/components/HomePageBannner";
 import { HomeBanner } from "@/components/HomeBanner";
-import { url } from "inspector";
+import { useRouter } from "next/navigation";
 
 const edjsParser = edjsHTML();
 
@@ -19,30 +19,30 @@ export const generateMetadata = async (): Promise<Metadata> => ({
 
 const images = [
   {
-    url: "/Home/banner/1.jpg",
-    heading: "The Perfect way to showcase",
-    text: "Here you can find the best window solutions for your project.",
+    url: "https://firebasestorage.googleapis.com/v0/b/mynewproject-92da4.appspot.com/o/pexels-blitzboy-950054.jpg?alt=media&token=5fe1e288-03f2-4264-88cd-5582ec45bf55",
+    heading: "Discover Innovative Window Designs",
+    text: "Explore our range of modern and efficient window solutions tailored to your needs.",
     buttonText: "Learn More",
     buttonLink: "/portfolio",
   },
   {
     url: "/Home/banner/3.jpg",
-    heading: "The Perfect way to showcase",
-    text: "Here you can find the best window solutions for your project.",
+    heading: "Transform Your Space with Style",
+    text: "Find the perfect window solutions to elevate the aesthetics of your project.",
     buttonText: "Learn More",
     buttonLink: "/portfolio",
   },
   {
     url: "/Home/banner/4.jpg",
-    heading: "The Perfect way to showcase",
-    text: "Here you can find the best window solutions for your project.",
+    heading: "Quality Windows for Every Project",
+    text: "Our solutions ensure both beauty and functionality for any building.",
     buttonText: "Learn More",
     buttonLink: "/portfolio",
   },
   {
     url: "/Home/banner/2.jpg",
-    heading: "The Perfect way to showcase",
-    text: "Here you can find the best window solutions for your project.",
+    heading: "Unmatched Elegance and Performance",
+    text: "Choose from our premium selection of windows to enhance your space.",
     buttonText: "Learn More",
     buttonLink: "/portfolio",
   },
@@ -72,14 +72,16 @@ const Home: NextPage = async () => {
         <div className="flex justify-evenly my-10 flex-wrap gap-5  ">
           {images.map((img, i) => {
             return (
-              <Image
-                key={i}
-                src={img.url}
-                alt={img.text}
-                className="h-[250px] w-[350px] cursor-pointer rounded-xl shadow-xl hover:scale-105 transition-all duration-500 ease-in-out"
-                width={1000}
-                height={1000}
-              />
+              <div className="flex flex-col gap-3" key={i}>
+                <Image
+                  src={img.url}
+                  alt={img.text}
+                  className="h-[250px] w-[350px] cursor-pointer rounded-xl shadow-xl hover:scale-105 transition-all duration-500 ease-in-out"
+                  width={1000}
+                  height={1000}
+                />
+                <h1 className="text-center font-semibold ">{img.heading}</h1>
+              </div>
             );
           })}
         </div>
@@ -119,40 +121,43 @@ const Home: NextPage = async () => {
           ))}
         </div>
       </div>
+
       <div className="mt-32 block">
         <h2 className="font-semibold text-3xl text-center mt-8">
           Our Categories
         </h2>
-        <div className="grid grid-cols-1 mt-10 md:grid-cols-2 gap-8 px-4 sm:px-8 xl:px-32 items-center justify-center mb-10">
-          {categories.map((category) => (
-            <Link
-              href={`/categories/${category.slug}`}
-              key={category.id}
-              className="flex flex-col items-center gap-2 bg-white rounded shadow-md hover:shadow-lg transition duration-300 ease-in-out"
-            >
-              <div key={category.id}>
-                {category.resource ? (
-                  <Image
-                    className="w-full h-[250px] md:h-auto object-cover"
-                    src={category.resource?.url}
-                    width={500}
-                    height={500}
-                    alt=""
-                  />
-                ) : null}
-              </div>
-              <div className="text-sm font-medium px-4 py-2">
-                {category.name}
-              </div>
-            </Link>
-          ))}
+        <div className="grid grid-cols-2 gap-5 items-center md:flex mt-8 justify-center">
+          {categories.map((category, index) => {
+            return index < 4 ? (
+              <Link
+                href={`/categories/${category.slug}`}
+                key={category.id}
+                className="flex flex-col gap-4 items-center group"
+              >
+                <div key={category.id} className="overflow-hidden">
+                  {category.resource ? (
+                    <Image
+                      className="w-[650px] h-[500px] transform transition-transform duration-500 ease-in-out group-hover:scale-110"
+                      src={category.resource?.url}
+                      alt=""
+                      height={1000}
+                      width={1000}
+                    />
+                  ) : null}
+                </div>
+                <div className="text-lg font-semibold">{category.name}</div>
+              </Link>
+            ) : null;
+          })}
         </div>
-        <button className="border border-black py-3 px-9 text-xl block mx-auto transition-colors duration-700 ease-in-out hover:bg-black hover:text-white">
+      </div>
+      <Link href="/products">
+        <button className="border mt-10 border-black py-3 px-9 text-xl block mx-auto transition-colors duration-700 ease-in-out hover:bg-black hover:text-white">
           Explore More
         </button>
-      </div>
+      </Link>
 
-      <div className="flex border mx-8 py-16 px-8 flex-col-reverse items-center gap-8 md:flex-row mt-32">
+      {/* <div className="flex border mx-8 py-16 px-8 flex-col-reverse items-center gap-8 md:flex-row mt-32">
         <div className="md:w-1/2 flex flex-col gap-4">
           <h1 className="font-semibold leading-tight text-5xl">
             Introducing our premium brands
@@ -175,9 +180,9 @@ const Home: NextPage = async () => {
             height={1}
           />
         </div>
-      </div>
+      </div> */}
 
-      <div className="h-4 bg-[#f0f0f0] mx-80" />
+      {/* <div className="h-4 bg-[#f0f0f0] mx-80" /> */}
 
       {/* <div className="flex px-4 lg:px-16 flex-col md:items-center gap-8 md:flex-row mt-32">
         <div className="w-full md:w-1/2 relative px-8 sm:px-16 xl:px-32">
@@ -205,7 +210,7 @@ const Home: NextPage = async () => {
         </div>
       </div> */}
 
-      <div className="flex px-4 lg:px-16 flex-col-reverse items-center gap-8 md:flex-row mt-32">
+      {/* <div className="flex px-4 lg:px-16 flex-col-reverse items-center gap-8 md:flex-row mt-32">
         <div className="w-full md:w-1/2 flex flex-col gap-4">
           <h1 className="font-semibold leading-tight text-5xl">
             Discover our Portfolio
@@ -279,7 +284,7 @@ const Home: NextPage = async () => {
             <div>Discover the power of optimized window solutions.</div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="mt-64 flex flex-col items-center text-center px-4 lg:px-16">
         <h2 className="font-medium text-5xl">Client Testimonials</h2>

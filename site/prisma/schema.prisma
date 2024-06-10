@@ -67,12 +67,14 @@ model Product {
   productCategories ProductCategory[]
   productBrands     ProductBrand[]
 
-  createdById String
-  updatedById String
-  createdAt   DateTime @default(now()) @db.Timestamptz()
-  updatedAt   DateTime @updatedAt @db.Timestamptz()
-  createdBy   User     @relation("productCreatedBy", fields: [createdById], references: [id])
-  updatedBy   User     @relation("productUpdatedBy", fields: [updatedById], references: [id])
+  createdById     String
+  updatedById     String
+  metaTitle       String?
+  metaDescription String?
+  createdAt       DateTime @default(now()) @db.Timestamptz()
+  updatedAt       DateTime @updatedAt @db.Timestamptz()
+  createdBy       User     @relation("productCreatedBy", fields: [createdById], references: [id])
+  updatedBy       User     @relation("productUpdatedBy", fields: [updatedById], references: [id])
 
   @@map("Products")
 }

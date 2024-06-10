@@ -1,17 +1,17 @@
-'use client'
+"use client";
 
-import EditorJS from '@editorjs/editorjs'
-import { zodResolver } from '@hookform/resolvers/zod'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
+import EditorJS from "@editorjs/editorjs";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { Heading } from '@/components/heading'
-import { Icons } from '@/components/icons'
-import { Shell } from '@/components/shell'
-import { SystemInfo } from '@/components/system-info'
+import { Heading } from "@/components/heading";
+import { Icons } from "@/components/icons";
+import { Shell } from "@/components/shell";
+import { SystemInfo } from "@/components/system-info";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,108 +21,112 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import MultipleSelector from '@/components/ui/multiple-selector'
-import { toast } from '@/components/ui/use-toast'
-import { formatDateTime, timesAgo } from '@/lib/formatDate'
-import { Delete } from 'lucide-react'
-import Image from 'next/image'
-import { GetBrandsFnDataType } from '../../brands/actions'
-import { GetCategoriesFnDataType } from '../../categories/actions'
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import MultipleSelector from "@/components/ui/multiple-selector";
+import { toast } from "@/components/ui/use-toast";
+import { formatDateTime, timesAgo } from "@/lib/formatDate";
+import { Delete } from "lucide-react";
+import Image from "next/image";
+import { GetBrandsFnDataType } from "../../brands/actions";
+import { GetCategoriesFnDataType } from "../../categories/actions";
 import {
   GetProductFnDataType,
   createProduct,
   deleteProduct,
   deleteProductImage,
-  updateProduct
-} from './actions'
+  updateProduct,
+} from "./actions";
 
 const ProductSchema = z.object({
   name: z.string().min(1),
   slug: z.string().min(1),
+  metaTitle: z.string().min(1),
+  metaDescription: z.string().min(1),
   brands: z.array(
     z.object({
       label: z.string(),
-      value: z.string()
+      value: z.string(),
     })
   ),
   categories: z.array(
     z.object({
       label: z.string(),
-      value: z.string()
+      value: z.string(),
     })
-  )
-})
+  ),
+});
 
-type FormData = z.infer<typeof ProductSchema>
+type FormData = z.infer<typeof ProductSchema>;
 
 export const Render: FC<{
-  product: GetProductFnDataType | undefined
-  brands: GetBrandsFnDataType['brands'] | undefined
-  categories: GetCategoriesFnDataType['categories'] | undefined
+  product: GetProductFnDataType | undefined;
+  brands: GetBrandsFnDataType["brands"] | undefined;
+  categories: GetCategoriesFnDataType["categories"] | undefined;
 }> = ({ product, brands, categories }) => {
   const form = useForm<FormData>({
     resolver: zodResolver(ProductSchema),
     defaultValues: {
-      name: product?.name ?? '',
-      slug: product?.slug ?? '',
+      name: product?.name ?? "",
+      slug: product?.slug ?? "",
       brands:
-        product?.productBrands.map(pb => ({
+        product?.productBrands.map((pb) => ({
           label: pb.brand.name,
-          value: pb.brand.id
+          value: pb.brand.id,
         })) ?? [],
       categories:
-        product?.productCategories.map(pc => ({
+        product?.productCategories.map((pc) => ({
           label: pc.category.name,
-          value: pc.category.id
-        })) ?? []
-    }
-  })
-  const router = useRouter()
-  const [isSaving, setIsSaving] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [files, setFiles] = useState<File[]>([])
-  const [images, setImages] = useState<{ id: string; url: string }[]>([])
+          value: pc.category.id,
+        })) ?? [],
+      metaTitle: product?.metaTitle ?? "",
+      metaDescription: product?.metaDescription ?? "",
+    },
+  });
+  const router = useRouter();
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
+  const [images, setImages] = useState<{ id: string; url: string }[]>([]);
 
-  const [isEditorMounted, setIsMounted] = useState<boolean>(false)
+  const [isEditorMounted, setIsMounted] = useState<boolean>(false);
 
-  const editorRef = useRef<EditorJS>()
+  const editorRef = useRef<EditorJS>();
   const initializeEditor = useCallback(async () => {
-    const EditorJS = (await import('@editorjs/editorjs')).default
+    const EditorJS = (await import("@editorjs/editorjs")).default;
 
     // @ts-ignore
-    const Table = (await import('@editorjs/table')).default
+    const Table = (await import("@editorjs/table")).default;
     // @ts-ignore
-    const List = (await import('@editorjs/list')).default
+    const List = (await import("@editorjs/list")).default;
     // @ts-ignore
-    const Image = (await import('@editorjs/image')).default
+    const Image = (await import("@editorjs/image")).default;
     // @ts-ignore
-    const Header = (await import('@editorjs/header')).default
+    const Header = (await import("@editorjs/header")).default;
     // @ts-ignore
-    const Quote = (await import('@editorjs/quote')).default
+    const Quote = (await import("@editorjs/quote")).default;
     // @ts-ignore
-    const CheckList = (await import('@editorjs/checklist')).default
+    const CheckList = (await import("@editorjs/checklist")).default;
     // @ts-ignore
-    const Delimiter = (await import('@editorjs/delimiter')).default
+    const Delimiter = (await import("@editorjs/delimiter")).default;
 
     if (!editorRef.current) {
       const editor = new EditorJS({
-        holder: 'editor',
+        holder: "editor",
         onReady() {
-          editorRef.current = editor
+          editorRef.current = editor;
         },
-        placeholder: 'Type here to write...',
+        placeholder: "Type here to write...",
         inlineToolbar: true,
         data: product?.description as any,
         tools: {
@@ -153,66 +157,66 @@ export const Render: FC<{
                   //     success: false
                   //   }
                   // }
-                  const formData = new FormData()
-                  formData.append('file', file)
+                  const formData = new FormData();
+                  formData.append("file", file);
 
-                  const res = await fetch('/api/upload', {
-                    method: 'POST',
-                    body: formData
-                  })
-                  const json = await res.json()
+                  const res = await fetch("/api/upload", {
+                    method: "POST",
+                    body: formData,
+                  });
+                  const json = await res.json();
                   if (json?.attachments) {
                     return {
                       success: true,
                       file: {
                         id: json.attachments[0].id,
-                        url: json.attachments[0].url
-                      }
-                    }
+                        url: json.attachments[0].url,
+                      },
+                    };
                   } else {
                     return {
-                      success: false
-                    }
+                      success: false,
+                    };
                   }
-                }
-              }
-            }
+                },
+              },
+            },
           },
           table: Table,
           checklist: CheckList,
           quote: Quote,
-          delimiter: Delimiter
-        }
-      })
+          delimiter: Delimiter,
+        },
+      });
     }
-  }, [product?.description])
+  }, [product?.description]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') setIsMounted(true)
-  }, [])
+    if (typeof window !== "undefined") setIsMounted(true);
+  }, []);
 
   useEffect(() => {
-    if (!isEditorMounted) return
+    if (!isEditorMounted) return;
 
-    initializeEditor()
+    initializeEditor();
 
     return () => {
-      editorRef.current?.destroy()
-      editorRef.current = undefined
-    }
-  }, [isEditorMounted, initializeEditor])
+      editorRef.current?.destroy();
+      editorRef.current = undefined;
+    };
+  }, [isEditorMounted, initializeEditor]);
 
   async function onSubmit(data: FormData) {
-    const editorData = await editorRef.current?.save()
+    const editorData = await editorRef.current?.save();
 
-    setIsSaving(true)
+    setIsSaving(true);
     try {
       let uploadedFiles:
         | {
-            fileId: string
-            fileUrl: string
+            fileId: string;
+            fileUrl: string;
           }[]
-        | undefined = []
+        | undefined = [];
       if (files.length) {
         for (const file of files) {
           // const formData = new FormData()
@@ -235,26 +239,26 @@ export const Render: FC<{
           //   setIsSaving(false)
           //   return
           // }
-          const formData = new FormData()
-          formData.append('file', file)
+          const formData = new FormData();
+          formData.append("file", file);
 
-          const res = await fetch('/api/upload', {
-            method: 'POST',
-            body: formData
-          })
-          const json = await res.json()
+          const res = await fetch("/api/upload", {
+            method: "POST",
+            body: formData,
+          });
+          const json = await res.json();
           if (json?.attachments) {
             uploadedFiles.push({
               fileId: json.attachments[0].id,
-              fileUrl: json.attachments[0].url
-            })
+              fileUrl: json.attachments[0].url,
+            });
           } else {
             toast({
-              title: 'Error uploading file',
-              variant: 'destructive'
-            })
-            setIsSaving(false)
-            return
+              title: "Error uploading file",
+              variant: "destructive",
+            });
+            setIsSaving(false);
+            return;
           }
         }
       }
@@ -262,38 +266,38 @@ export const Render: FC<{
         const newId = await createProduct({
           ...data,
           description: editorData,
-          fileIds: uploadedFiles?.map(f => f.fileId),
-          brandIds: data.brands.map(b => b.value),
-          categoryIds: data.categories.map(c => c.value)
-        })
-        router.replace(`/products/${newId}`)
+          fileIds: uploadedFiles?.map((f) => f.fileId),
+          brandIds: data.brands.map((b) => b.value),
+          categoryIds: data.categories.map((c) => c.value),
+        });
+        router.replace(`/products/${newId}`);
       } else {
         await updateProduct({
           id: product.id,
           ...data,
           description: editorData,
-          fileIds: uploadedFiles?.map(f => f.fileId),
-          brandIds: data.brands.map(b => b.value),
-          categoryIds: data.categories.map(c => c.value)
-        })
+          fileIds: uploadedFiles?.map((f) => f.fileId),
+          brandIds: data.brands.map((b) => b.value),
+          categoryIds: data.categories.map((c) => c.value),
+        });
       }
-      setImages([])
-      setFiles([])
+      setImages([]);
+      setFiles([]);
       toast({
-        title: 'product saved'
-      })
+        title: "product saved",
+      });
     } catch (err) {
       toast({
-        title: 'Error saving product',
-        variant: 'destructive'
-      })
+        title: "Error saving product",
+        variant: "destructive",
+      });
     }
-    setIsSaving(false)
+    setIsSaving(false);
   }
 
   return (
     <Shell>
-      <Heading heading={product ? product.name || product.id : 'New product'} />
+      <Heading heading={product ? product.name || product.id : "New product"} />
       <Form {...form}>
         <form
           className="grid grid-cols-1 gap-3 md:grid-cols-2"
@@ -341,20 +345,20 @@ export const Render: FC<{
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={async () => {
-                        setIsDeleting(true)
+                        setIsDeleting(true);
                         try {
-                          await deleteProduct(product.id)
+                          await deleteProduct(product.id);
                           toast({
-                            title: 'product deleted'
-                          })
-                          router.push('/products')
+                            title: "product deleted",
+                          });
+                          router.push("/products");
                         } catch (err) {
                           toast({
-                            title: 'Error deleting product',
-                            variant: 'destructive'
-                          })
+                            title: "Error deleting product",
+                            variant: "destructive",
+                          });
                         }
-                        setIsDeleting(false)
+                        setIsDeleting(false);
                       }}
                     >
                       Continue
@@ -389,7 +393,8 @@ export const Render: FC<{
                     type="text"
                     placeholder="Enter a name"
                     disabled={isSaving}
-                    {...field}
+                    value={field.value as string}
+                    onChange={(e) => field.onChange(e.target.value)}
                   />
                 </FormControl>
                 <FormMessage />
@@ -428,7 +433,7 @@ export const Render: FC<{
                 <MultipleSelector
                   defaultOptions={brands?.map(({ id, name }) => ({
                     label: name,
-                    value: id
+                    value: id,
                   }))}
                   placeholder="Select Brands"
                   {...field}
@@ -448,7 +453,7 @@ export const Render: FC<{
                 <MultipleSelector
                   defaultOptions={categories?.map(({ id, name }) => ({
                     label: name,
-                    value: id
+                    value: id,
                   }))}
                   placeholder="Select Categories"
                   {...field}
@@ -460,7 +465,46 @@ export const Render: FC<{
           />
 
           <FormField
-            name={'images'}
+            control={form.control}
+            name="metaTitle"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Meta Title</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="Enter meta title"
+                    disabled={isSaving}
+                    {...field}
+                    value={(field.value as string) || ""}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="metaDescription"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Meta Description</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="Enter meta description"
+                    disabled={isSaving}
+                    {...field}
+                    value={(field.value as string) || ""}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name={"images"}
             render={() => (
               <FormItem>
                 <FormLabel>Images</FormLabel>
@@ -468,20 +512,20 @@ export const Render: FC<{
                   type="file"
                   multiple
                   placeholder="Enter images"
-                  onChange={async e => {
+                  onChange={async (e) => {
                     if (e.target.files) {
-                      const f = e.target?.files
+                      const f = e.target?.files;
                       if (f.length) {
-                        setFiles(Array.from(f))
+                        setFiles(Array.from(f));
                         for (const file of f) {
-                          const buffer = await file?.arrayBuffer()
-                          setImages(prev => [
+                          const buffer = await file?.arrayBuffer();
+                          setImages((prev) => [
                             ...prev,
                             {
                               id: file.name,
-                              url: URL.createObjectURL(new Blob([buffer]))
-                            }
-                          ])
+                              url: URL.createObjectURL(new Blob([buffer])),
+                            },
+                          ]);
                         }
                       }
                     }
@@ -500,8 +544,8 @@ export const Render: FC<{
                 <Delete
                   className="cursor-pointer"
                   onClick={async () => {
-                    setImages(prev => prev.filter(p => p.id !== image.id))
-                    setFiles(prev => prev.filter(p => p.name !== image.id))
+                    setImages((prev) => prev.filter((p) => p.id !== image.id));
+                    setFiles((prev) => prev.filter((p) => p.name !== image.id));
                   }}
                 />
               </div>
@@ -513,7 +557,7 @@ export const Render: FC<{
                 <Delete
                   className="cursor-pointer"
                   onClick={async () => {
-                    await deleteProductImage(image.id)
+                    await deleteProductImage(image.id);
                   }}
                 />
               </div>
@@ -527,10 +571,10 @@ export const Render: FC<{
               </h3>
               <div id="editor" className="min-h-[360px] w-full" />
               <p className="text-sm text-gray-500">
-                Use{' '}
+                Use{" "}
                 <kbd className="rounded-md border bg-muted px-1 text-xs uppercase">
                   Tab
-                </kbd>{' '}
+                </kbd>{" "}
                 to open the command menu.
               </p>
             </div>
@@ -542,28 +586,28 @@ export const Render: FC<{
         <SystemInfo
           items={[
             {
-              label: 'Id',
-              value: product.id
+              label: "Id",
+              value: product.id,
             },
             {
-              label: 'Created At',
-              value: formatDateTime(product.createdAt)
+              label: "Created At",
+              value: formatDateTime(product.createdAt),
             },
             {
-              label: 'Updated At',
-              value: timesAgo(product.updatedAt)
+              label: "Updated At",
+              value: timesAgo(product.updatedAt),
             },
             {
-              label: 'Created By',
-              value: product.createdBy.name
+              label: "Created By",
+              value: product.createdBy.name,
             },
             {
-              label: 'Updated By',
-              value: product.updatedBy.name
-            }
+              label: "Updated By",
+              value: product.updatedBy.name,
+            },
           ]}
         />
       ) : undefined}
     </Shell>
-  )
-}
+  );
+};
