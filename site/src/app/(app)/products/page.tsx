@@ -13,24 +13,28 @@ const Products: NextPage = async () => {
       </div>
       <div className="flex flex-wrap">
         {topCategories.map((category) => (
-          // <Link href={`categories/${category.slug}`} key={category.id}>
-          <div key={category.id} className="w-1/4 p-2">
-            <div className="bg-white rounded-lg shadow-lg">
-              <div className="h-40 relative">
-                <Image
-                  src={category?.resource?.url!}
-                  layout="fill"
-                  objectFit="cover"
-                  alt={category.name}
-                />
-              </div>
-              <div className="p-4">
-                <h4 className="text-lg font-bold">{category.name}</h4>
-                {/* <p className="text-sm text-gray-500">{category.description}</p> */}
+          <Link
+            href={`categories/${category.slug}`}
+            className="w-1/4 p-2"
+            key={category.id}
+          >
+            <div key={category.id}>
+              <div className="bg-white rounded-lg shadow-lg">
+                <div className="h-40 relative">
+                  <Image
+                    src={category?.resource?.url!}
+                    layout="fill"
+                    objectFit="cover"
+                    alt={category.name}
+                  />
+                </div>
+                <div className="p-4">
+                  <h4 className="text-lg font-bold">{category.name}</h4>
+                  {/* <p className="text-sm text-gray-500">{category.description}</p> */}
+                </div>
               </div>
             </div>
-          </div>
-          // </Link>
+          </Link>
         ))}
       </div>
     </div>
