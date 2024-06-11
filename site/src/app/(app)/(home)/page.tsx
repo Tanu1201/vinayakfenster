@@ -1,17 +1,13 @@
 import { Button } from "@/components/UI/Button";
 import { siteConfig } from "@/lib/siteConfig";
-import edjsHTML from "editorjs-html";
 import { Metadata, NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { IoIosArrowDropright, IoIosStarOutline } from "react-icons/io";
+import { IoIosStarOutline } from "react-icons/io";
 import { getCategories, getTopBrands, getTopTestimonials } from "./actions";
 import "swiper/css";
 import HomePageBannner from "@/components/HomePageBannner";
 import { HomeBanner } from "@/components/HomeBanner";
-import { useRouter } from "next/navigation";
-
-const edjsParser = edjsHTML();
 
 export const generateMetadata = async (): Promise<Metadata> => ({
   title: siteConfig.name,
