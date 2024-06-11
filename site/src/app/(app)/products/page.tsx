@@ -8,8 +8,8 @@ const Products: NextPage = async () => {
   const [topCategories] = await Promise.all([getCategories()]);
   return (
     <div className="w-full h-full">
-      <div className="w-full h-[40vh] bg-[url('https://firebasestorage.googleapis.com/v0/b/mynewproject-92da4.appspot.com/o/pexels-steve-851238.jpg?alt=media&token=16c865d4-8fc6-4e69-bda6-e27243535438')] flex items-center ">
-        <h2 className="text-3xl font-bold ml-[10vw] ">Our Products</h2>
+      <div className="w-full h-[40vh] bg-[url('https://firebasestorage.googleapis.com/v0/b/mynewproject-92da4.appspot.com/o/pexels-steve-851238.jpg?alt=media&token=16c865d4-8fc6-4e69-bda6-e27243535438')] bg-cover bg-center flex items-center">
+        <h2 className="text-3xl font-bold ml-[10vw]">Our Products</h2>
       </div>
       <div className="flex flex-wrap">
         {topCategories.map((category) => (
