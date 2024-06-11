@@ -1,11 +1,9 @@
-import { NextPage } from "next";
-import React from "react";
-import { getCategories } from "../(home)/actions";
-import Image from "next/image";
-import Link from "next/link";
+import { NextPage } from "next"
+import Image from "next/image"
+import { getCategories } from "../(home)/actions"
 
 const Products: NextPage = async () => {
-  const [topCategories] = await Promise.all([getCategories()]);
+  const [topCategories] = await Promise.all([getCategories()])
   return (
     <div className="w-full h-full">
       <div className="w-full h-[40vh] bg-[url('https://firebasestorage.googleapis.com/v0/b/mynewproject-92da4.appspot.com/o/pexels-steve-851238.jpg?alt=media&token=16c865d4-8fc6-4e69-bda6-e27243535438')] flex items-center ">
@@ -34,7 +32,7 @@ const Products: NextPage = async () => {
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Products;
+export default Products

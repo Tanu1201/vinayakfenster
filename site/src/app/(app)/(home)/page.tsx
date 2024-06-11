@@ -1,21 +1,17 @@
-import { Button } from "@/components/UI/Button";
-import { siteConfig } from "@/lib/siteConfig";
-import edjsHTML from "editorjs-html";
-import { Metadata, NextPage } from "next";
-import Image from "next/image";
-import Link from "next/link";
-import { IoIosArrowDropright, IoIosStarOutline } from "react-icons/io";
-import { getCategories, getTopBrands, getTopTestimonials } from "./actions";
-import "swiper/css";
-import HomePageBannner from "@/components/HomePageBannner";
-import { HomeBanner } from "@/components/HomeBanner";
-import { useRouter } from "next/navigation";
-
-const edjsParser = edjsHTML();
+import { HomeBanner } from "@/components/HomeBanner"
+import HomePageBannner from "@/components/HomePageBannner"
+import { Button } from "@/components/UI/Button"
+import { siteConfig } from "@/lib/siteConfig"
+import { Metadata, NextPage } from "next"
+import Image from "next/image"
+import Link from "next/link"
+import { IoIosStarOutline } from "react-icons/io"
+import "swiper/css"
+import { getCategories, getTopBrands, getTopTestimonials } from "./actions"
 
 export const generateMetadata = async (): Promise<Metadata> => ({
   title: siteConfig.name,
-});
+})
 
 const images = [
   {
@@ -46,14 +42,14 @@ const images = [
     buttonText: "Learn More",
     buttonLink: "/portfolio",
   },
-];
+]
 
 const Home: NextPage = async () => {
   const [topBrands, categories, testimonials] = await Promise.all([
     getTopBrands(),
     getCategories(),
     getTopTestimonials(),
-  ]);
+  ])
 
   return (
     <>
@@ -82,7 +78,7 @@ const Home: NextPage = async () => {
                 />
                 <h1 className="text-center font-semibold ">{img.heading}</h1>
               </div>
-            );
+            )
           })}
         </div>
       </div>
@@ -147,7 +143,7 @@ const Home: NextPage = async () => {
                 </div>
                 <div className="text-lg font-semibold">{category.name}</div>
               </Link>
-            ) : null;
+            ) : null
           })}
         </div>
       </div>
@@ -355,7 +351,7 @@ const Home: NextPage = async () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
