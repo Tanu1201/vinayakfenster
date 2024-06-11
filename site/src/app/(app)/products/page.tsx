@@ -1,5 +1,6 @@
 import { NextPage } from "next"
 import Image from "next/image"
+import Link from "next/link"
 import { getCategories } from "../(home)/actions"
 
 const Products: NextPage = async () => {
